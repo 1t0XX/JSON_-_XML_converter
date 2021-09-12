@@ -1,0 +1,2693 @@
+type: edu
+custom_name: stage6
+files:
+- name: src/converter/Main.java
+  visible: true
+  text: |
+    package converter;
+
+    public class Main {
+        public static void main(String[] args) {
+            System.out.println("Hello World!");
+        }
+    }
+  learner_created: false
+- name: test/ConverterTest.java
+  visible: false
+  text: |
+    import com.google.gson.*;
+    import org.hyperskill.hstest.stage.StageTest;
+    import org.hyperskill.hstest.testcase.CheckResult;
+    import org.hyperskill.hstest.testcase.TestCase;
+
+    import org.w3c.dom.*;
+
+    import javax.xml.parsers.*;
+    import java.io.*;
+
+    import java.math.BigDecimal;
+    import java.util.*;
+
+    class Clue {
+        String answer;
+        String input;
+
+        Clue(String answer, String input) {
+            this.answer = answer.strip();
+            this.input = input.strip();
+        }
+    }
+
+    public class ConverterTest extends StageTest<Clue> {
+
+        static Map<String, String> allTests;
+
+        static {
+            allTests = new LinkedHashMap<>();
+
+            allTests.put(
+                "{\n" +
+                    "    \"transactions\": {\n" +
+                    "        \"id\": \"6753322\",\n" +
+                    "        \"data\": [\n" +
+                    "            124,\n" +
+                    "            true,\n" +
+                    "            false,\n" +
+                    "            [ ],\n" +
+                    "            [],\n" +
+                    "            { },\n" +
+                    "            {},\n" +
+                    "            [\n" +
+                    "                1, 2, 3,\n" +
+                    "                {\n" +
+                    "                    \"@attr\": \"value6\",\n" +
+                    "                    \"#element\": \"value7\"\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            null,\n" +
+                    "            \"\",\n" +
+                    "            {\n" +
+                    "                \"key1\": \"value1\",\n" +
+                    "                \"key2\": {\n" +
+                    "                    \"@attr\": \"value2\",\n" +
+                    "                    \"#key2\": \"value3\"\n" +
+                    "                }\n" +
+                    "            },\n" +
+                    "            {\n" +
+                    "                \"@attr2\": \"value4\",\n" +
+                    "                \"#element\": \"value5\"\n" +
+                    "            }\n" +
+                    "        ]\n" +
+                    "    }\n" +
+                    "}",
+
+
+                "<transactions>\n" +
+                    "    <id>6753322</id>\n" +
+                    "    <data>\n" +
+                    "        <element>124</element>\n" +
+                    "        <element>true</element>\n" +
+                    "        <element>false</element>\n" +
+                    "        <element></element>\n" +
+                    "        <element></element>\n" +
+                    "        <element></element>\n" +
+                    "        <element></element>\n" +
+                    "        <element>\n" +
+                    "            <element>1</element>\n" +
+                    "            <element>2</element>\n" +
+                    "            <element>3</element>\n" +
+                    "            <element attr=\"value6\">value7</element>\n" +
+                    "        </element>\n" +
+                    "        <element />\n" +
+                    "        <element></element>\n" +
+                    "        <element>\n" +
+                    "            <key1>value1</key1>\n" +
+                    "            <key2 attr=\"value2\">value3</key2>\n" +
+                    "        </element>\n" +
+                    "        <element attr2=\"value4\">value5</element>\n" +
+                    "    </data>\n" +
+                    "</transactions>"
+            );
+
+
+
+            allTests.put(
+                "<?xml version = \"1.0\" encoding = \"utf-8\"?>\n" +
+                    "<transactions>\n" +
+                    "    <transaction>\n" +
+                    "        <id>6753323</id>\n" +
+                    "        <number region = \"Russia\">8-900-000-00-00</number>\n" +
+                    "        <date day = \"12\" month = \"12\" year = \"2018\"/>\n" +
+                    "        <amount currency=\"EUR\">1000.00</amount>\n" +
+                    "        <completed>true</completed>\n" +
+                    "    </transaction>\n" +
+                    "    <transaction>\n" +
+                    "        <id>67533244</id>\n" +
+                    "        <number region = \"Russia\">8-900-000-00-01</number>\n" +
+                    "        <date day = \"13\" month = \"12\" year = \"2018\"/>\n" +
+                    "        <amount currency =\"RUB\">2000.00</amount>\n" +
+                    "        <completed>true</completed>\n" +
+                    "    </transaction>\n" +
+                    "    <transaction>\n" +
+                    "        <id>67533257</id>\n" +
+                    "        <number region=\"Russia\">8-900-000-00-02</number>\n" +
+                    "        <date day = \"14\" month = \"12\" year = \"2018\"/>\n" +
+                    "        <amount currency = \"EUR\">3000.00</amount>\n" +
+                    "        <completed>false</completed>\n" +
+                    "    </transaction>\n" +
+                    "    <transaction>\n" +
+                    "        <id>67533259</id>\n" +
+                    "        <number region = \"Ukraine\">8-900-000-00-03</number>\n" +
+                    "        <date day = \"15\" month = \"12\" year = \"2018\"/>\n" +
+                    "        <amount currency = \"GRN\">4000.00</amount>\n" +
+                    "        <completed>false</completed>\n" +
+                    "    </transaction>\n" +
+                    "    <transaction>\n" +
+                    "        <id>67533566</id>\n" +
+                    "        <number region = \"Ukraine\">8-900-000-00-04</number>\n" +
+                    "        <date day = \"16\" month = \"12\" year = \"2018\"/>\n" +
+                    "        <amount currency = \"USD\">5000.00</amount>\n" +
+                    "        <completed>false</completed>\n" +
+                    "    </transaction>\n" +
+                    "</transactions>",
+
+
+                "{\n" +
+                    "    \"transactions\" : [\n" +
+                    "        {\n" +
+                    "            \"id\" : \"6753323\",\n" +
+                    "            \"number\" : {\n" +
+                    "                \"@region\" : \"Russia\",\n" +
+                    "                \"#number\" : \"8-900-000-00-00\"\n" +
+                    "            },\n" +
+                    "            \"date\" : {\n" +
+                    "                \"@day\" : \"12\",\n" +
+                    "                \"@month\" : \"12\",\n" +
+                    "                \"@year\" : \"2018\",\n" +
+                    "                \"#date\" : null\n" +
+                    "            },\n" +
+                    "            \"amount\" : {\n" +
+                    "                \"@currency\" : \"EUR\",\n" +
+                    "                \"#amount\" : \"1000.00\"\n" +
+                    "            },\n" +
+                    "            \"completed\" : \"true\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"id\" : \"67533244\",\n" +
+                    "            \"number\" : {\n" +
+                    "                \"@region\" : \"Russia\",\n" +
+                    "                \"#number\" : \"8-900-000-00-01\"\n" +
+                    "            },\n" +
+                    "            \"date\" : {\n" +
+                    "                \"@day\" : \"13\",\n" +
+                    "                \"@month\" : \"12\",\n" +
+                    "                \"@year\" : \"2018\",\n" +
+                    "                \"#date\" : null\n" +
+                    "            },\n" +
+                    "            \"amount\" : {\n" +
+                    "                \"@currency\" : \"RUB\",\n" +
+                    "                \"#amount\" : \"2000.00\"\n" +
+                    "            },\n" +
+                    "            \"completed\" : \"true\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"id\" : \"67533257\",\n" +
+                    "            \"number\" : {\n" +
+                    "                \"@region\" : \"Russia\",\n" +
+                    "                \"#number\" : \"8-900-000-00-02\"\n" +
+                    "            },\n" +
+                    "            \"date\" : {\n" +
+                    "                \"@day\" : \"14\",\n" +
+                    "                \"@month\" : \"12\",\n" +
+                    "                \"@year\" : \"2018\",\n" +
+                    "                \"#date\" : null\n" +
+                    "            },\n" +
+                    "            \"amount\" : {\n" +
+                    "                \"@currency\" : \"EUR\",\n" +
+                    "                \"#amount\" : \"3000.00\"\n" +
+                    "            },\n" +
+                    "            \"completed\" : \"false\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"id\" : \"67533259\",\n" +
+                    "            \"number\" : {\n" +
+                    "                \"@region\" : \"Ukraine\",\n" +
+                    "                \"#number\" : \"8-900-000-00-03\"\n" +
+                    "            },\n" +
+                    "            \"date\" : {\n" +
+                    "                \"@day\" : \"15\",\n" +
+                    "                \"@month\" : \"12\",\n" +
+                    "                \"@year\" : \"2018\",\n" +
+                    "                \"#date\" : null\n" +
+                    "            },\n" +
+                    "            \"amount\" : {\n" +
+                    "                \"@currency\" : \"GRN\",\n" +
+                    "                \"#amount\" : \"4000.00\"\n" +
+                    "            },\n" +
+                    "            \"completed\" : \"false\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"id\" : \"67533566\",\n" +
+                    "            \"number\" : {\n" +
+                    "                \"@region\" : \"Ukraine\",\n" +
+                    "                \"#number\" : \"8-900-000-00-04\"\n" +
+                    "            },\n" +
+                    "            \"date\" : {\n" +
+                    "                \"@day\" : \"16\",\n" +
+                    "                \"@month\" : \"12\",\n" +
+                    "                \"@year\" : \"2018\",\n" +
+                    "                \"#date\" : null\n" +
+                    "            },\n" +
+                    "            \"amount\" : {\n" +
+                    "                \"@currency\" : \"USD\",\n" +
+                    "                \"#amount\" : \"5000.00\"\n" +
+                    "            },\n" +
+                    "            \"completed\" : \"false\"\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}"
+            );
+
+
+
+            allTests.put(
+                "{\n" +
+                    "    \"transaction\": {\n" +
+                    "        \"id\": \"6753324\",\n" +
+                    "        \"number\": {\n" +
+                    "            \"@region\": \"Russia\",\n" +
+                    "            \"#number\": \"8-900-000-000\"\n" +
+                    "        },\n" +
+                    "        \"special1\": false,\n" +
+                    "        \"special2\": true,\n" +
+                    "        \"empty1\": null,\n" +
+                    "        \"empty2\": { },\n" +
+                    "        \"empty3\": [ ],\n" +
+                    "        \"empty4\": {},\n" +
+                    "        \"empty5\": [],\n" +
+                    "        \"empty6\": {\n" +
+                    "\n" +
+                    "        },\n" +
+                    "        \"empty7\": [\n" +
+                    "\n" +
+                    "        ],\n" +
+                    "        \"empty8\": \"\",\n" +
+                    "        \"array1\": [\n" +
+                    "            null, null\n" +
+                    "        ],\n" +
+                    "        \"array2\": [\n" +
+                    "            [],\n" +
+                    "            true, false, null,\n" +
+                    "            123, 123.456,\n" +
+                    "            \"\",\n" +
+                    "            {\n" +
+                    "                \"key1\": \"value1\",\n" +
+                    "                \"key2\": {\n" +
+                    "                    \"@attr\": \"value2\",\n" +
+                    "                    \"#key2\": \"value3\"\n" +
+                    "                }\n" +
+                    "            },\n" +
+                    "            {\n" +
+                    "                \"@attr2\": \"value4\",\n" +
+                    "                \"#element\": \"value5\"\n" +
+                    "            }\n" +
+                    "            ,\n" +
+                    "            {\n" +
+                    "                \"@attr3\": \"value4\",\n" +
+                    "                \"#elem\": \"value5\"\n" +
+                    "            },\n" +
+                    "            {\n" +
+                    "                \"#element\": null\n" +
+                    "            },\n" +
+                    "            {\n" +
+                    "                \"#element\": {\n" +
+                    "                    \"deep\": {\n" +
+                    "                        \"@deepattr\": \"deepvalue\",\n" +
+                    "                        \"#deep\": [\n" +
+                    "                            1, 2, 3\n" +
+                    "                        ]\n" +
+                    "                    }\n" +
+                    "                }\n" +
+                    "            }\n" +
+                    "        ],\n" +
+                    "        \"inner1\": {\n" +
+                    "            \"inner2\": {\n" +
+                    "                \"inner3\": {\n" +
+                    "                    \"key1\": \"value1\",\n" +
+                    "                    \"key2\": \"value2\"\n" +
+                    "                }\n" +
+                    "            }\n" +
+                    "        },\n" +
+                    "        \"inner4\": {\n" +
+                    "            \"@\": 123,\n" +
+                    "            \"#inner4\": \"value3\"\n" +
+                    "        },\n" +
+                    "        \"inner5\": {\n" +
+                    "            \"@attr1\": 123.456,\n" +
+                    "            \"#inner4\": \"value4\"\n" +
+                    "        },\n" +
+                    "        \"inner6\": {\n" +
+                    "            \"@attr2\": 789.321,\n" +
+                    "            \"#inner6\": \"value5\"\n" +
+                    "        },\n" +
+                    "        \"inner7\": {\n" +
+                    "            \"#inner7\": \"value6\"\n" +
+                    "        },\n" +
+                    "        \"inner8\": {\n" +
+                    "            \"@attr3\": \"value7\"\n" +
+                    "        },\n" +
+                    "        \"inner9\": {\n" +
+                    "            \"@attr4\": \"value8\",\n" +
+                    "            \"#inner9\": \"value9\",\n" +
+                    "            \"something\": \"value10\"\n" +
+                    "        },\n" +
+                    "        \"inner10\": {\n" +
+                    "            \"@attr5\": null,\n" +
+                    "            \"#inner10\": null\n" +
+                    "        },\n" +
+                    "        \"inner11\": {\n" +
+                    "            \"@attr11\": \"value11\",\n" +
+                    "            \"#inner11\": {\n" +
+                    "                \"inner12\": {\n" +
+                    "                    \"@attr12\": \"value12\",\n" +
+                    "                    \"#inner12\": {\n" +
+                    "                        \"inner13\": {\n" +
+                    "                            \"@attr13\": \"value13\",\n" +
+                    "                            \"#inner13\": {\n" +
+                    "                                \"inner14\": \"v14\"\n" +
+                    "                            }\n" +
+                    "                        }\n" +
+                    "                    }\n" +
+                    "                }\n" +
+                    "            }\n" +
+                    "        },\n" +
+                    "        \"inner15\": {\n" +
+                    "            \"@\": null,\n" +
+                    "            \"#\": null\n" +
+                    "        },\n" +
+                    "        \"inner16\": {\n" +
+                    "            \"@somekey\": \"attrvalue\",\n" +
+                    "            \"#inner16\": null,\n" +
+                    "            \"somekey\": \"keyvalue\",\n" +
+                    "            \"inner16\": \"notnull\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr1\": {\n" +
+                    "            \"@attr1\": 123,\n" +
+                    "            \"#crazyattr1\": \"v15\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr2\": {\n" +
+                    "            \"@attr1\": 123.456,\n" +
+                    "            \"#crazyattr2\": \"v16\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr3\": {\n" +
+                    "            \"@attr1\": null,\n" +
+                    "            \"#crazyattr3\": \"v17\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr4\": {\n" +
+                    "            \"@attr1\": true,\n" +
+                    "            \"#crazyattr4\": \"v18\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr5\": {\n" +
+                    "            \"@attr1\": false,\n" +
+                    "            \"#crazyattr5\": \"v19\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr6\": {\n" +
+                    "            \"@attr1\": \"\",\n" +
+                    "            \"#crazyattr6\": \"v20\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr7\": {\n" +
+                    "            \"@attr1\": {},\n" +
+                    "            \"#crazyattr7\": \"v21\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr9\": {\n" +
+                    "            \"@attr1\": {\n" +
+                    "                \"@\": 1,\n" +
+                    "                \"#\": 2,\n" +
+                    "                \"\": 3,\n" +
+                    "                \"key\": 4\n" +
+                    "            },\n" +
+                    "            \"#crazyattr9\": \"v23\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr10\": {\n" +
+                    "            \"@attr1\": [],\n" +
+                    "            \"#crazyattr10\": \"v24\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr11\": {\n" +
+                    "            \"attr1\": \"better\",\n" +
+                    "            \"@attr1\": {\n" +
+                    "                \"key9\": \"value9\"\n" +
+                    "            },\n" +
+                    "            \"#crazyattr11\": \"v25\"\n" +
+                    "        },\n" +
+                    "        \"crazyattr12\": {\n" +
+                    "            \"@attr1\": [\n" +
+                    "                \"\"\n" +
+                    "            ],\n" +
+                    "            \"#crazyattr12\": \"v26\"\n" +
+                    "        },\n" +
+                    "        \"\": {\n" +
+                    "            \"#\": null,\n" +
+                    "            \"secret\": \"won't be converted\"\n" +
+                    "        },\n" +
+                    "        \"@\": 123,\n" +
+                    "        \"#\": [\n" +
+                    "            1, 2, 3\n" +
+                    "        ]\n" +
+                    "    },\n" +
+                    "    \"meta\": {\n" +
+                    "        \"version\": 0.01\n" +
+                    "    }\n" +
+                    "}",
+
+
+                "<root>\n" +
+                    "    <transaction>\n" +
+                    "        <id>6753324</id>\n" +
+                    "        <number region=\"Russia\">8-900-000-000</number>\n" +
+                    "        <special1>false</special1>\n" +
+                    "        <special2>true</special2>\n" +
+                    "        <empty1 />\n" +
+                    "        <empty2></empty2>\n" +
+                    "        <empty3></empty3>\n" +
+                    "        <empty4></empty4>\n" +
+                    "        <empty5></empty5>\n" +
+                    "        <empty6></empty6>\n" +
+                    "        <empty7></empty7>\n" +
+                    "        <empty8></empty8>\n" +
+                    "        <array1>\n" +
+                    "            <element />\n" +
+                    "            <element />\n" +
+                    "        </array1>\n" +
+                    "        <array2>\n" +
+                    "            <element></element>\n" +
+                    "            <element>true</element>\n" +
+                    "            <element>false</element>\n" +
+                    "            <element />\n" +
+                    "            <element>123</element>\n" +
+                    "            <element>123.456</element>\n" +
+                    "            <element></element>\n" +
+                    "            <element>\n" +
+                    "                <key1>value1</key1>\n" +
+                    "                <key2 attr=\"value2\">value3</key2>\n" +
+                    "            </element>\n" +
+                    "            <element attr2=\"value4\">value5</element>\n" +
+                    "            <element>\n" +
+                    "                <attr3>value4</attr3>\n" +
+                    "                <elem>value5</elem>\n" +
+                    "            </element>\n" +
+                    "            <element />\n" +
+                    "            <element>\n" +
+                    "                <deep deepattr=\"deepvalue\">\n" +
+                    "                    <element>1</element>\n" +
+                    "                    <element>2</element>\n" +
+                    "                    <element>3</element>\n" +
+                    "                </deep>\n" +
+                    "            </element>\n" +
+                    "        </array2>\n" +
+                    "        <inner1>\n" +
+                    "            <inner2>\n" +
+                    "                <inner3>\n" +
+                    "                    <key1>value1</key1>\n" +
+                    "                    <key2>value2</key2>\n" +
+                    "                </inner3>\n" +
+                    "            </inner2>\n" +
+                    "        </inner1>\n" +
+                    "        <inner4>\n" +
+                    "            <inner4>value3</inner4>\n" +
+                    "        </inner4>\n" +
+                    "        <inner5>\n" +
+                    "            <attr1>123.456</attr1>\n" +
+                    "            <inner4>value4</inner4>\n" +
+                    "        </inner5>\n" +
+                    "        <inner6 attr2=\"789.321\">value5</inner6>\n" +
+                    "        <inner7>value6</inner7>\n" +
+                    "        <inner8>\n" +
+                    "            <attr3>value7</attr3>\n" +
+                    "        </inner8>\n" +
+                    "        <inner9>\n" +
+                    "            <attr4>value8</attr4>\n" +
+                    "            <inner9>value9</inner9>\n" +
+                    "            <something>value10</something>\n" +
+                    "        </inner9>\n" +
+                    "        <inner10 attr5=\"\" />\n" +
+                    "        <inner11 attr11=\"value11\">\n" +
+                    "            <inner12 attr12=\"value12\">\n" +
+                    "                <inner13 attr13=\"value13\">\n" +
+                    "                    <inner14>v14</inner14>\n" +
+                    "                </inner13>\n" +
+                    "            </inner12>\n" +
+                    "        </inner11>\n" +
+                    "        <inner15></inner15>\n" +
+                    "        <inner16>\n" +
+                    "            <somekey>keyvalue</somekey>\n" +
+                    "            <inner16>notnull</inner16>\n" +
+                    "        </inner16>\n" +
+                    "        <crazyattr1 attr1=\"123\">v15</crazyattr1>\n" +
+                    "        <crazyattr2 attr1=\"123.456\">v16</crazyattr2>\n" +
+                    "        <crazyattr3 attr1=\"\">v17</crazyattr3>\n" +
+                    "        <crazyattr4 attr1=\"true\">v18</crazyattr4>\n" +
+                    "        <crazyattr5 attr1=\"false\">v19</crazyattr5>\n" +
+                    "        <crazyattr6 attr1=\"\">v20</crazyattr6>\n" +
+                    "        <crazyattr7 attr1=\"\">v21</crazyattr7>\n" +
+                    "        <crazyattr9>\n" +
+                    "            <attr1>\n" +
+                    "                <key>4</key>\n" +
+                    "            </attr1>\n" +
+                    "            <crazyattr9>v23</crazyattr9>\n" +
+                    "        </crazyattr9>\n" +
+                    "        <crazyattr10 attr1=\"\">v24</crazyattr10>\n" +
+                    "        <crazyattr11>\n" +
+                    "            <attr1>better</attr1>\n" +
+                    "            <crazyattr11>v25</crazyattr11>\n" +
+                    "        </crazyattr11>\n" +
+                    "        <crazyattr12>\n" +
+                    "            <attr1>\n" +
+                    "                <element></element>\n" +
+                    "            </attr1>\n" +
+                    "            <crazyattr12>v26</crazyattr12>\n" +
+                    "        </crazyattr12>\n" +
+                    "    </transaction>\n" +
+                    "    <meta>\n" +
+                    "        <version>0.01</version>\n" +
+                    "    </meta>\n" +
+                    "</root>"
+            );
+
+
+            allTests.put(
+                "<root>\n" +
+                    "    <transaction>\n" +
+                    "        <id>6753325</id>\n" +
+                    "        <number region='Russia'>8-900-000-000</number>\n" +
+                    "        <special1>false</special1>\n" +
+                    "        <special2>true</special2>\n" +
+                    "        <empty1 />\n" +
+                    "        <empty2></empty2>\n" +
+                    "        <array1>\n" +
+                    "            <element />\n" +
+                    "            <element />\n" +
+                    "        </array1>\n" +
+                    "        <array2>\n" +
+                    "            <element></element>\n" +
+                    "            <element />\n" +
+                    "            <element>123</element>\n" +
+                    "            <element>123.456</element>\n" +
+                    "            <element>\n" +
+                    "                <key1>value1</key1>\n" +
+                    "                <key2 attr=\"value2\">value3</key2>\n" +
+                    "            </element>\n" +
+                    "            <element attr2='value4'>value5</element>\n" +
+                    "            <element>\n" +
+                    "                <attr3>value4</attr3>\n" +
+                    "                <elem>value5</elem>\n" +
+                    "            </element>\n" +
+                    "            <element>\n" +
+                    "                <deep deepattr=\"deepvalue\">\n" +
+                    "                    <element>1</element>\n" +
+                    "                    <element>2</element>\n" +
+                    "                    <element>3</element>\n" +
+                    "                </deep>\n" +
+                    "            </element>\n" +
+                    "        </array2>\n" +
+                    "        <inner1>\n" +
+                    "            <inner2>\n" +
+                    "                <inner3>\n" +
+                    "                    <key1>value1</key1>\n" +
+                    "                    <key2>value2</key2>\n" +
+                    "                </inner3>\n" +
+                    "            </inner2>\n" +
+                    "        </inner1>\n" +
+                    "        <inner4>\n" +
+                    "            <inner4>value3</inner4>\n" +
+                    "        </inner4>\n" +
+                    "        <inner5>\n" +
+                    "            <attr1>123.456</attr1>\n" +
+                    "            <inner4>value4</inner4>\n" +
+                    "        </inner5>\n" +
+                    "        <inner6 attr2=\"789.321\">value5</inner6>\n" +
+                    "        <inner7>value6</inner7>\n" +
+                    "        <inner8>\n" +
+                    "            <attr3>value7</attr3>\n" +
+                    "        </inner8>\n" +
+                    "        <inner9>\n" +
+                    "            <attr4>value8</attr4>\n" +
+                    "            <inner9>value9</inner9>\n" +
+                    "            <something>value10</something>\n" +
+                    "        </inner9>\n" +
+                    "        <inner10 attr5='' />\n" +
+                    "        <inner11 attr11=\"value11\">\n" +
+                    "            <inner12 attr12=\"value12\">\n" +
+                    "                <inner13 attr13=\"value13\">\n" +
+                    "                    <inner14>v14</inner14>\n" +
+                    "                </inner13>\n" +
+                    "            </inner12>\n" +
+                    "        </inner11>\n" +
+                    "        <inner15></inner15>\n" +
+                    "        <inner16>\n" +
+                    "            <somekey>keyvalue</somekey>\n" +
+                    "            <inner16>notnull</inner16>\n" +
+                    "        </inner16>\n" +
+                    "        <crazyattr1 attr1='123'>v15</crazyattr1>\n" +
+                    "        <crazyattr2 attr1=\"123.456\">v16</crazyattr2>\n" +
+                    "        <crazyattr3 attr1=''>v17</crazyattr3>\n" +
+                    "        <crazyattr9>\n" +
+                    "            <attr1>\n" +
+                    "                <key>4</key>\n" +
+                    "            </attr1>\n" +
+                    "            <crazyattr9>v23</crazyattr9>\n" +
+                    "        </crazyattr9>\n" +
+                    "    </transaction>\n" +
+                    "    <meta>\n" +
+                    "        <version>0.01</version>\n" +
+                    "    </meta>\n" +
+                    "</root>",
+
+
+                "{\n" +
+                    "    \"root\": {\n" +
+                    "        \"transaction\": {\n" +
+                    "            \"id\": \"6753325\",\n" +
+                    "            \"number\": {\n" +
+                    "                \"@region\": \"Russia\",\n" +
+                    "                \"#number\": \"8-900-000-000\"\n" +
+                    "            },\n" +
+                    "            \"special1\": \"false\",\n" +
+                    "            \"special2\": \"true\",\n" +
+                    "            \"empty1\": null,\n" +
+                    "            \"empty2\": \"\",\n" +
+                    "            \"array1\": [\n" +
+                    "                null, null\n" +
+                    "            ],\n" +
+                    "            \"array2\": [\n" +
+                    "                \"\",\n" +
+                    "                null,\n" +
+                    "                \"123\",\n" +
+                    "                \"123.456\",\n" +
+                    "                {\n" +
+                    "                    \"key1\": \"value1\",\n" +
+                    "                    \"key2\": {\n" +
+                    "                        \"@attr\": \"value2\",\n" +
+                    "                        \"#key2\": \"value3\"\n" +
+                    "                    }\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"@attr2\": \"value4\",\n" +
+                    "                    \"#element\": \"value5\"\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"attr3\": \"value4\",\n" +
+                    "                    \"elem\": \"value5\"\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"deep\": {\n" +
+                    "                        \"@deepattr\": \"deepvalue\",\n" +
+                    "                        \"#deep\": [\n" +
+                    "                            \"1\",\n" +
+                    "                            \"2\",\n" +
+                    "                            \"3\"\n" +
+                    "                        ]\n" +
+                    "                    }\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"inner1\": {\n" +
+                    "                \"inner2\": {\n" +
+                    "                    \"inner3\": {\n" +
+                    "                        \"key1\": \"value1\",\n" +
+                    "                        \"key2\": \"value2\"\n" +
+                    "                    }\n" +
+                    "                }\n" +
+                    "            },\n" +
+                    "            \"inner4\": {\n" +
+                    "                \"inner4\": \"value3\"\n" +
+                    "            },\n" +
+                    "            \"inner5\": {\n" +
+                    "                \"attr1\": \"123.456\",\n" +
+                    "                \"inner4\": \"value4\"\n" +
+                    "            },\n" +
+                    "            \"inner6\": {\n" +
+                    "                \"@attr2\": \"789.321\",\n" +
+                    "                \"#inner6\": \"value5\"\n" +
+                    "            },\n" +
+                    "            \"inner7\": \"value6\",\n" +
+                    "            \"inner8\": {\n" +
+                    "                \"attr3\": \"value7\"\n" +
+                    "            },\n" +
+                    "            \"inner9\": {\n" +
+                    "                \"attr4\": \"value8\",\n" +
+                    "                \"inner9\": \"value9\",\n" +
+                    "                \"something\": \"value10\"\n" +
+                    "            },\n" +
+                    "            \"inner10\": {\n" +
+                    "                \"@attr5\": \"\",\n" +
+                    "                \"#inner10\": null\n" +
+                    "            },\n" +
+                    "            \"inner11\": {\n" +
+                    "                \"@attr11\": \"value11\",\n" +
+                    "                \"#inner11\": {\n" +
+                    "                    \"inner12\": {\n" +
+                    "                        \"@attr12\": \"value12\",\n" +
+                    "                        \"#inner12\": {\n" +
+                    "                            \"inner13\": {\n" +
+                    "                                \"@attr13\": \"value13\",\n" +
+                    "                                \"#inner13\": {\n" +
+                    "                                    \"inner14\": \"v14\"\n" +
+                    "                                }\n" +
+                    "                            }\n" +
+                    "                        }\n" +
+                    "                    }\n" +
+                    "                }\n" +
+                    "            },\n" +
+                    "            \"inner15\": \"\",\n" +
+                    "            \"inner16\": {\n" +
+                    "                \"somekey\": \"keyvalue\",\n" +
+                    "                \"inner16\": \"notnull\"\n" +
+                    "            },\n" +
+                    "            \"crazyattr1\": {\n" +
+                    "                \"@attr1\": \"123\",\n" +
+                    "                \"#crazyattr1\": \"v15\"\n" +
+                    "            },\n" +
+                    "            \"crazyattr2\": {\n" +
+                    "                \"@attr1\": \"123.456\",\n" +
+                    "                \"#crazyattr2\": \"v16\"\n" +
+                    "            },\n" +
+                    "            \"crazyattr3\": {\n" +
+                    "                \"@attr1\": \"\",\n" +
+                    "                \"#crazyattr3\": \"v17\"\n" +
+                    "            },\n" +
+                    "            \"crazyattr9\": {\n" +
+                    "                \"attr1\": {\n" +
+                    "                    \"key\": \"4\"\n" +
+                    "                },\n" +
+                    "                \"crazyattr9\": \"v23\"\n" +
+                    "            }\n" +
+                    "        },\n" +
+                    "        \"meta\": {\n" +
+                    "            \"version\": \"0.01\"\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}"
+            );
+
+
+            allTests.put(
+                "{\"transaction\":{\"id\":\"6753326\",\"number\":{\"@region\":\"Russia\",\"#number\":\"8-900-000-000\"},\"special1\":false,\"special2\":true,\"empty1\":null,\"empty2\":{},\"empty3\":[],\"empty4\":{},\"empty5\":[],\"empty6\":{},\"empty7\":[],\"empty8\":\"\",\"array1\":[null,null],\"array2\":[[],true,false,null,123,123.456,\"\",{\"key1\":\"value1\",\"key2\":{\"@attr\":\"value2\",\"#key2\":\"value3\"}},{\"@attr2\":\"value4\",\"#element\":\"value5\"},{\"@attr3\":\"value4\",\"#elem\":\"value5\"},{\"#element\":null},{\"#element\":{\"deep\":{\"@deepattr\":\"deepvalue\",\"#deep\":[1,2,3]}}}],\"inner1\":{\"inner2\":{\"inner3\":{\"key1\":\"value1\",\"key2\":\"value2\"}}},\"inner4\":{\"@\":123,\"#inner4\":\"value3\"},\"inner5\":{\"@attr1\":123.456,\"#inner4\":\"value4\"},\"inner6\":{\"@attr2\":789.321,\"#inner6\":\"value5\"},\"inner7\":{\"#inner7\":\"value6\"},\"inner8\":{\"@attr3\":\"value7\"},\"inner9\":{\"@attr4\":\"value8\",\"#inner9\":\"value9\",\"something\":\"value10\"},\"inner10\":{\"@attr5\":null,\"#inner10\":null},\"inner11\":{\"@attr11\":\"value11\",\"#inner11\":{\"inner12\":{\"@attr12\":\"value12\",\"#inner12\":{\"inner13\":{\"@attr13\":\"value13\",\"#inner13\":{\"inner14\":\"v14\"}}}}}},\"inner15\":{\"@\":null,\"#\":null},\"inner16\":{\"@somekey\":\"attrvalue\",\"#inner16\":null,\"somekey\":\"keyvalue\",\"inner16\":\"notnull\"},\"crazyattr1\":{\"@attr1\":123,\"#crazyattr1\":\"v15\"},\"crazyattr2\":{\"@attr1\":123.456,\"#crazyattr2\":\"v16\"},\"crazyattr3\":{\"@attr1\":null,\"#crazyattr3\":\"v17\"},\"crazyattr4\":{\"@attr1\":true,\"#crazyattr4\":\"v18\"},\"crazyattr5\":{\"@attr1\":false,\"#crazyattr5\":\"v19\"},\"crazyattr6\":{\"@attr1\":\"\",\"#crazyattr6\":\"v20\"},\"crazyattr7\":{\"@attr1\":{},\"#crazyattr7\":\"v21\"},\"crazyattr9\":{\"@attr1\":{\"@\":1,\"#\":2,\"\":3,\"key\":4},\"#crazyattr9\":\"v23\"},\"crazyattr10\":{\"@attr1\":[],\"#crazyattr10\":\"v24\"},\"crazyattr11\":{\"attr1\":\"better\",\"@attr1\":{\"key9\":\"value9\"},\"#crazyattr11\":\"v25\"},\"crazyattr12\":{\"@attr1\":[\"\"],\"#crazyattr12\":\"v26\"},\"\":{\"#\":null,\"secret\":\"won't be converted\"},\"@\":123,\"#\":[1,2,3]},\"meta\":{\"version\":0.01}}",
+
+
+                "<root>\n" +
+                    "    <transaction>\n" +
+                    "        <id>6753326</id>\n" +
+                    "        <number region=\"Russia\">8-900-000-000</number>\n" +
+                    "        <special1>false</special1>\n" +
+                    "        <special2>true</special2>\n" +
+                    "        <empty1 />\n" +
+                    "        <empty2></empty2>\n" +
+                    "        <empty3></empty3>\n" +
+                    "        <empty4></empty4>\n" +
+                    "        <empty5></empty5>\n" +
+                    "        <empty6></empty6>\n" +
+                    "        <empty7></empty7>\n" +
+                    "        <empty8></empty8>\n" +
+                    "        <array1>\n" +
+                    "            <element />\n" +
+                    "            <element />\n" +
+                    "        </array1>\n" +
+                    "        <array2>\n" +
+                    "            <element></element>\n" +
+                    "            <element>true</element>\n" +
+                    "            <element>false</element>\n" +
+                    "            <element />\n" +
+                    "            <element>123</element>\n" +
+                    "            <element>123.456</element>\n" +
+                    "            <element></element>\n" +
+                    "            <element>\n" +
+                    "                <key1>value1</key1>\n" +
+                    "                <key2 attr=\"value2\">value3</key2>\n" +
+                    "            </element>\n" +
+                    "            <element attr2=\"value4\">value5</element>\n" +
+                    "            <element>\n" +
+                    "                <attr3>value4</attr3>\n" +
+                    "                <elem>value5</elem>\n" +
+                    "            </element>\n" +
+                    "            <element />\n" +
+                    "            <element>\n" +
+                    "                <deep deepattr=\"deepvalue\">\n" +
+                    "                    <element>1</element>\n" +
+                    "                    <element>2</element>\n" +
+                    "                    <element>3</element>\n" +
+                    "                </deep>\n" +
+                    "            </element>\n" +
+                    "        </array2>\n" +
+                    "        <inner1>\n" +
+                    "            <inner2>\n" +
+                    "                <inner3>\n" +
+                    "                    <key1>value1</key1>\n" +
+                    "                    <key2>value2</key2>\n" +
+                    "                </inner3>\n" +
+                    "            </inner2>\n" +
+                    "        </inner1>\n" +
+                    "        <inner4>\n" +
+                    "            <inner4>value3</inner4>\n" +
+                    "        </inner4>\n" +
+                    "        <inner5>\n" +
+                    "            <attr1>123.456</attr1>\n" +
+                    "            <inner4>value4</inner4>\n" +
+                    "        </inner5>\n" +
+                    "        <inner6 attr2=\"789.321\">value5</inner6>\n" +
+                    "        <inner7>value6</inner7>\n" +
+                    "        <inner8>\n" +
+                    "            <attr3>value7</attr3>\n" +
+                    "        </inner8>\n" +
+                    "        <inner9>\n" +
+                    "            <attr4>value8</attr4>\n" +
+                    "            <inner9>value9</inner9>\n" +
+                    "            <something>value10</something>\n" +
+                    "        </inner9>\n" +
+                    "        <inner10 attr5=\"\" />\n" +
+                    "        <inner11 attr11=\"value11\">\n" +
+                    "            <inner12 attr12=\"value12\">\n" +
+                    "                <inner13 attr13=\"value13\">\n" +
+                    "                    <inner14>v14</inner14>\n" +
+                    "                </inner13>\n" +
+                    "            </inner12>\n" +
+                    "        </inner11>\n" +
+                    "        <inner15></inner15>\n" +
+                    "        <inner16>\n" +
+                    "            <somekey>keyvalue</somekey>\n" +
+                    "            <inner16>notnull</inner16>\n" +
+                    "        </inner16>\n" +
+                    "        <crazyattr1 attr1=\"123\">v15</crazyattr1>\n" +
+                    "        <crazyattr2 attr1=\"123.456\">v16</crazyattr2>\n" +
+                    "        <crazyattr3 attr1=\"\">v17</crazyattr3>\n" +
+                    "        <crazyattr4 attr1=\"true\">v18</crazyattr4>\n" +
+                    "        <crazyattr5 attr1=\"false\">v19</crazyattr5>\n" +
+                    "        <crazyattr6 attr1=\"\">v20</crazyattr6>\n" +
+                    "        <crazyattr7 attr1=\"\">v21</crazyattr7>\n" +
+                    "        <crazyattr9>\n" +
+                    "            <attr1>\n" +
+                    "                <key>4</key>\n" +
+                    "            </attr1>\n" +
+                    "            <crazyattr9>v23</crazyattr9>\n" +
+                    "        </crazyattr9>\n" +
+                    "        <crazyattr10 attr1=\"\">v24</crazyattr10>\n" +
+                    "        <crazyattr11>\n" +
+                    "            <attr1>better</attr1>\n" +
+                    "            <crazyattr11>v25</crazyattr11>\n" +
+                    "        </crazyattr11>\n" +
+                    "        <crazyattr12>\n" +
+                    "            <attr1>\n" +
+                    "                <element></element>\n" +
+                    "            </attr1>\n" +
+                    "            <crazyattr12>v26</crazyattr12>\n" +
+                    "        </crazyattr12>\n" +
+                    "    </transaction>\n" +
+                    "    <meta>\n" +
+                    "        <version>0.01</version>\n" +
+                    "    </meta>\n" +
+                    "</root>"
+            );
+
+
+            allTests.put(
+                "<root><transaction><id>6753327</id><number region='Russia'>8-900-000-000</number><special1>false</special1><special2>true</special2><empty1 /><empty2></empty2><array1><element /><element /></array1><array2><element></element><element /><element>123</element><element>123.456</element><element><key1>value1</key1><key2 attr=\"value2\">value3</key2></element><element attr2='value4'>value5</element><element><attr3>value4</attr3><elem>value5</elem></element><element><deep deepattr=\"deepvalue\"><element>1</element><element>2</element><element>3</element></deep></element></array2><inner1><inner2><inner3><key1>value1</key1><key2>value2</key2></inner3></inner2></inner1><inner4><inner4>value3</inner4></inner4><inner5><attr1>123.456</attr1><inner4>value4</inner4></inner5><inner6 attr2=\"789.321\">value5</inner6><inner7>value6</inner7><inner8><attr3>value7</attr3></inner8><inner9><attr4>value8</attr4><inner9>value9</inner9><something>value10</something></inner9><inner10 attr5='' /><inner11 attr11=\"value11\"><inner12 attr12=\"value12\"><inner13 attr13=\"value13\"><inner14>v14</inner14></inner13></inner12></inner11><inner15></inner15><inner16><somekey>keyvalue</somekey><inner16>notnull</inner16></inner16><crazyattr1 attr1='123'>v15</crazyattr1><crazyattr2 attr1=\"123.456\">v16</crazyattr2><crazyattr3 attr1=''>v17</crazyattr3><crazyattr9><attr1><key>4</key></attr1><crazyattr9>v23</crazyattr9></crazyattr9></transaction><meta><version>0.01</version></meta></root>",
+
+
+                "{\n" +
+                    "    \"root\": {" +
+                    "        \"transaction\": {\n" +
+                    "            \"id\": \"6753327\",\n" +
+                    "            \"number\": {\n" +
+                    "                \"@region\": \"Russia\",\n" +
+                    "                \"#number\": \"8-900-000-000\"\n" +
+                    "            },\n" +
+                    "            \"special1\": \"false\",\n" +
+                    "            \"special2\": \"true\",\n" +
+                    "            \"empty1\": null,\n" +
+                    "            \"empty2\": \"\",\n" +
+                    "            \"array1\": [\n" +
+                    "                null, null\n" +
+                    "            ],\n" +
+                    "            \"array2\": [\n" +
+                    "                \"\",\n" +
+                    "                null,\n" +
+                    "                \"123\",\n" +
+                    "                \"123.456\",\n" +
+                    "                {\n" +
+                    "                    \"key1\": \"value1\",\n" +
+                    "                    \"key2\": {\n" +
+                    "                        \"@attr\": \"value2\",\n" +
+                    "                        \"#key2\": \"value3\"\n" +
+                    "                    }\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"@attr2\": \"value4\",\n" +
+                    "                    \"#element\": \"value5\"\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"attr3\": \"value4\",\n" +
+                    "                    \"elem\": \"value5\"\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"deep\": {\n" +
+                    "                        \"@deepattr\": \"deepvalue\",\n" +
+                    "                        \"#deep\": [\n" +
+                    "                            \"1\",\n" +
+                    "                            \"2\",\n" +
+                    "                            \"3\"\n" +
+                    "                        ]\n" +
+                    "                    }\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"inner1\": {\n" +
+                    "                \"inner2\": {\n" +
+                    "                    \"inner3\": {\n" +
+                    "                        \"key1\": \"value1\",\n" +
+                    "                        \"key2\": \"value2\"\n" +
+                    "                    }\n" +
+                    "                }\n" +
+                    "            },\n" +
+                    "            \"inner4\": {\n" +
+                    "                \"inner4\": \"value3\"\n" +
+                    "            },\n" +
+                    "            \"inner5\": {\n" +
+                    "                \"attr1\": \"123.456\",\n" +
+                    "                \"inner4\": \"value4\"\n" +
+                    "            },\n" +
+                    "            \"inner6\": {\n" +
+                    "                \"@attr2\": \"789.321\",\n" +
+                    "                \"#inner6\": \"value5\"\n" +
+                    "            },\n" +
+                    "            \"inner7\": \"value6\",\n" +
+                    "            \"inner8\": {\n" +
+                    "                \"attr3\": \"value7\"\n" +
+                    "            },\n" +
+                    "            \"inner9\": {\n" +
+                    "                \"attr4\": \"value8\",\n" +
+                    "                \"inner9\": \"value9\",\n" +
+                    "                \"something\": \"value10\"\n" +
+                    "            },\n" +
+                    "            \"inner10\": {\n" +
+                    "                \"@attr5\": \"\",\n" +
+                    "                \"#inner10\": null\n" +
+                    "            },\n" +
+                    "            \"inner11\": {\n" +
+                    "                \"@attr11\": \"value11\",\n" +
+                    "                \"#inner11\": {\n" +
+                    "                    \"inner12\": {\n" +
+                    "                        \"@attr12\": \"value12\",\n" +
+                    "                        \"#inner12\": {\n" +
+                    "                            \"inner13\": {\n" +
+                    "                                \"@attr13\": \"value13\",\n" +
+                    "                                \"#inner13\": {\n" +
+                    "                                    \"inner14\": \"v14\"\n" +
+                    "                                }\n" +
+                    "                            }\n" +
+                    "                        }\n" +
+                    "                    }\n" +
+                    "                }\n" +
+                    "            },\n" +
+                    "            \"inner15\": \"\",\n" +
+                    "            \"inner16\": {\n" +
+                    "                \"somekey\": \"keyvalue\",\n" +
+                    "                \"inner16\": \"notnull\"\n" +
+                    "            },\n" +
+                    "            \"crazyattr1\": {\n" +
+                    "                \"@attr1\": \"123\",\n" +
+                    "                \"#crazyattr1\": \"v15\"\n" +
+                    "            },\n" +
+                    "            \"crazyattr2\": {\n" +
+                    "                \"@attr1\": \"123.456\",\n" +
+                    "                \"#crazyattr2\": \"v16\"\n" +
+                    "            },\n" +
+                    "            \"crazyattr3\": {\n" +
+                    "                \"@attr1\": \"\",\n" +
+                    "                \"#crazyattr3\": \"v17\"\n" +
+                    "            },\n" +
+                    "            \"crazyattr9\": {\n" +
+                    "                \"attr1\": {\n" +
+                    "                    \"key\": \"4\"\n" +
+                    "                },\n" +
+                    "                \"crazyattr9\": \"v23\"\n" +
+                    "            }\n" +
+                    "        },\n" +
+                    "        \"meta\": {\n" +
+                    "            \"version\": \"0.01\"\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}"
+            );
+        }
+
+        @Override
+        public List<TestCase<Clue>> generate() {
+
+            List<TestCase<Clue>> tests = new ArrayList<>();
+
+            for (String input : allTests.keySet()) {
+                String answer = allTests.get(input);
+
+                TestCase<Clue> test = new TestCase<>();
+                test.addFile("test.txt", input);
+                test.setAttach(new Clue(answer, input));
+
+                tests.add(test);
+            }
+
+            return tests;
+        }
+
+        @Override
+        public CheckResult check(String reply, Clue clue) {
+
+            String user = reply.strip();
+            String answer = clue.answer.strip();
+
+            if (user.length() == 0) {
+                return new CheckResult(false,
+                    "Your output is empty line.");
+            }
+
+            CheckResult result;
+
+            if (user.charAt(0) != '<' && user.charAt(0) != '{') {
+                return new CheckResult(false,
+                    "Your first symbol is wrong - " +
+                        " should be '{' or '<'");
+            }
+
+            try {
+                if (user.charAt(0) == '<' && answer.charAt(0) == '<') {
+                    result = isEqualXMLs(user, answer);
+                } else if (user.charAt(0) == '{' && answer.charAt(0) == '{') {
+                    result = isEqualJSONs(user, answer);
+                } else {
+                    return new CheckResult(false,
+                        "Your first symbol is wrong - " +
+                            "'{' instead of '<' or vice versa" + "\n\n" + user + "\n\n" + answer);
+                }
+            } catch (Exception ex) {
+                return new CheckResult(false,
+                    "Can't check the output - invalid XML or JSON");
+            }
+
+            return result;
+        }
+
+        public static Element stringToXML(String str) throws Exception {
+            DocumentBuilderFactory factory =
+                DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+
+            ByteArrayInputStream input = new ByteArrayInputStream(
+                str.getBytes("UTF-8"));
+
+            Document document = builder.parse(input);
+
+            return document.getDocumentElement();
+        }
+
+
+        public static CheckResult isEqualXMLs(String s1, String s2) throws Exception {
+            Element elem1 = stringToXML(s1);
+            Element elem2 = stringToXML(s2);
+
+            CheckResult result = isEqualXMLElements(elem1, elem2);
+
+            if (!result.isCorrect()) {
+                return result;
+            } else {
+                return isEqualXMLElements(elem2, elem1);
+            }
+        }
+
+        public static CheckResult isEqualXMLElements(Element e1, Element e2) {
+            // test name
+            if (!e1.getNodeName().equals(e2.getNodeName())) {
+                return new CheckResult(false,
+                    "In XML: element name is incorrect");
+            }
+
+            // test attributes
+            NamedNodeMap attributes = e1.getAttributes();
+            for (int i = 0; i < attributes.getLength(); i++) {
+                Attr attr = (Attr) attributes.item(i);
+
+                String name = attr.getName();
+
+                if (!e2.hasAttribute(name)) {
+                    return new CheckResult(false,
+                        "In XML: element doesn't have " +
+                            "an attribute or has an excess attribute");
+                }
+
+                if (!attr.getValue().equals(e2.getAttribute(name))) {
+                    return new CheckResult(false,
+                        "In XML: element has an attribute " +
+                            "but their values don't match");
+                }
+            }
+
+            // test chidls
+            if (e1.hasChildNodes() != e2.hasChildNodes()) {
+                return new CheckResult(false,
+                    "In XML: element doesn't have needed " +
+                        "child nodes or has excess child nodes");
+            }
+
+            if (!e1.hasChildNodes()) {
+                return CheckResult.correct();
+            }
+
+            NodeList childs1 = e1.getChildNodes();
+            NodeList childs2 = e2.getChildNodes();
+
+            List<Element> filteredChilds1 = new ArrayList<>();
+            List<Element> filteredChilds2 = new ArrayList<>();
+
+            for (int i = 0; i < childs1.getLength(); i++) {
+                Object item = childs1.item(i);
+                if (item instanceof Element) {
+                    filteredChilds1.add((Element) childs1.item(i));
+                }
+            }
+
+            for (int i = 0; i < childs2.getLength(); i++) {
+                Object item = childs2.item(i);
+                if (item instanceof Element) {
+                    filteredChilds2.add((Element) childs2.item(i));
+                }
+            }
+
+            if (filteredChilds1.size() != filteredChilds2.size()) {
+                return new CheckResult(false,
+                    "In XML: element doesn't have needed " +
+                        "child nodes or has excess child nodes");
+            }
+
+            for (int i = 0; i < filteredChilds1.size(); i++) {
+
+                Element elem1 = filteredChilds1.get(i);
+                Element elem2 = filteredChilds2.get(i);
+
+                CheckResult result = isEqualXMLElements(elem1, elem2);
+                if (!result.isCorrect()) {
+                    return result;
+                }
+            }
+
+            return CheckResult.correct();
+        }
+
+        public static JsonElement stringToJSON(String str) {
+            return new JsonParser().parse(str);
+        }
+
+
+        public static CheckResult isEqualJSONs(String s1, String s2) {
+            JsonElement elem1 = stringToJSON(s1);
+            JsonElement elem2 = stringToJSON(s2);
+
+            CheckResult result = isEqualJSONElements(elem1, elem2);
+
+            if (!result.isCorrect()) {
+                return result;
+            } else {
+                return isEqualJSONElements(elem2, elem1);
+            }
+        }
+
+        public static CheckResult isEqualJSONElements(JsonElement e1, JsonElement e2) {
+
+            // check for null
+            if (e1.isJsonNull() != e2.isJsonNull()) {
+                return new CheckResult(false,
+                    "In JSON: expected null but found something else " +
+                        "(or vice versa)");
+            }
+            if (e1.isJsonNull()) {
+                return CheckResult.correct();
+            }
+
+
+            // check for primitives
+            if (e1.isJsonPrimitive() != e2.isJsonPrimitive()) {
+                // number and boolean are also may be expected but
+                // after converting from XML there can be only strings
+                return new CheckResult(false,
+                    "In JSON: expected string " +
+                        "but found something else (or vice versa)");
+            }
+            if (e1.isJsonPrimitive()) {
+                JsonPrimitive prim1 = e1.getAsJsonPrimitive();
+                JsonPrimitive prim2 = e2.getAsJsonPrimitive();
+                return compareJSONPrimitives(prim1, prim2);
+            }
+
+
+            // check for arrays
+            if (e1.isJsonArray() != e2.isJsonArray()) {
+                return new CheckResult(false,
+                    "In JSON: expected array " +
+                        "but found something else (or vice versa)");
+            }
+            if (e1.isJsonArray()) {
+                JsonArray arr1 = e1.getAsJsonArray();
+                JsonArray arr2 = e2.getAsJsonArray();
+                return compareJSONArrays(arr1, arr2);
+            }
+
+
+            // check for objects
+            if (e1.isJsonObject() != e2.isJsonObject()) {
+                return new CheckResult(false,
+                    "In JSON: expected object " +
+                        "but found something else (or vice versa)");
+            }
+            if (e1.isJsonObject()) {
+                JsonObject obj1 = e1.getAsJsonObject();
+                JsonObject obj2 = e2.getAsJsonObject();
+                return compareJSONObjects(obj1, obj2);
+            }
+
+            return CheckResult.correct();
+        }
+
+
+        public static CheckResult compareJSONPrimitives(JsonPrimitive prim1,
+                                                        JsonPrimitive prim2) {
+
+            if (prim1.isBoolean() && prim2.isBoolean()) {
+                return new CheckResult(
+                    prim1.getAsBoolean() == prim2.getAsBoolean(),
+                    "In JSON: two boolean values don't match");
+            }
+            if (prim1.isNumber() && prim2.isNumber()) {
+                BigDecimal num1 = prim1.getAsBigDecimal();
+                BigDecimal num2 = prim2.getAsBigDecimal();
+                return new CheckResult(num1.equals(num2),
+                    "In JSON: two number values don't match");
+            }
+            if (prim1.isString() && prim2.isString()) {
+                String num1 = prim1.getAsString();
+                String num2 = prim2.getAsString();
+                return new CheckResult(num1.equals(num2),
+                    "In JSON: two string values don't match");
+            }
+
+
+            if (prim1.isString() && prim2.isNumber() ||
+                prim1.isNumber() && prim2.isString()) {
+
+                return new CheckResult(false,
+                    "In JSON: expected string value but " +
+                        "found number (or vice versa)");
+            }
+            if (prim1.isString() && prim2.isBoolean() ||
+                prim1.isBoolean() && prim2.isString()) {
+
+                return new CheckResult(false,
+                    "In JSON: expected string value but " +
+                        "found boolean (or vice versa)");
+            }
+            if (prim1.isNumber() && prim2.isBoolean() ||
+                prim1.isBoolean() && prim2.isNumber()) {
+
+                return new CheckResult(false,
+                    "In JSON: expected number value but " +
+                        "found boolean (or vice versa)");
+            }
+
+            return CheckResult.correct();
+        }
+
+        public static CheckResult compareJSONArrays(JsonArray arr1, JsonArray arr2) {
+            if (arr1.size() != arr2.size()) {
+                return new CheckResult(false,
+                    "In JSON: array size is incorrect");
+            }
+
+            for (int i = 0; i < arr1.size(); i++) {
+                JsonElement elem1 = arr1.get(i);
+                JsonElement elem2 = arr2.get(i);
+
+                CheckResult result = isEqualJSONElements(elem1, elem2);
+                if (!result.isCorrect()) {
+                    return result;
+                }
+            }
+
+            return CheckResult.correct();
+        }
+
+        public static CheckResult compareJSONObjects(JsonObject obj1, JsonObject obj2) {
+
+            for (String key : obj1.keySet()) {
+                if (!obj2.has(key)) {
+                    return new CheckResult(false,
+                        "In JSON: object doesn't have " +
+                            "needed key or has an excess key");
+                }
+
+                JsonElement value1 = obj1.get(key);
+                JsonElement value2 = obj2.get(key);
+
+                CheckResult result = isEqualJSONElements(value1, value2);
+                if (!result.isCorrect()) {
+                    return result;
+                }
+            }
+
+            return CheckResult.correct();
+        }
+    }
+  learner_created: false
+- name: src/converter/JSONComponents/JSONNumber.java
+  visible: true
+  text: |2-
+
+    package converter.JSONComponents;
+
+    public abstract class JSONNumber implements JSONComponent {
+    }
+  learner_created: true
+- name: src/converter/XMLComponents/XMLComponent.java
+  visible: true
+  text: |2-
+
+    package converter.XMLComponents;
+
+    //Marker interface, same as JSON counterpart
+    public interface XMLComponent {
+    }
+  learner_created: true
+- name: src/converter/JSONComponents/JSONBoolean.java
+  visible: true
+  text: |-
+    package converter.JSONComponents;
+
+    public class JSONBoolean implements JSONComponent {
+        private final boolean bool;
+
+        public JSONBoolean(boolean bool) {
+            this.bool = bool;
+        }
+
+        @Override
+        public String toString() {
+            return JSONRepresentation();
+        }
+
+        @Override
+        public String JSONRepresentation() {
+            return Boolean.toString(bool);
+        }
+    }
+  learner_created: true
+- name: src/converter/JSONComponents/JSONFloat.java
+  visible: true
+  text: |2-
+
+    package converter.JSONComponents;
+
+    public class JSONFloat extends JSONNumber {
+        private final double num;
+
+        public JSONFloat(double num) {
+            this.num = num;
+        }
+
+        @Override
+        public String toString() {
+            return JSONRepresentation();
+        }
+
+        @Override
+        public String JSONRepresentation() {
+            return Double.toString(num);
+        }
+    }
+  learner_created: true
+- name: src/converter/ElementModel/ElementModel.java
+  visible: true
+  text: |+
+    package converter.ElementModel;
+
+
+    import javax.swing.*;
+    import java.util.ArrayList;
+    import java.util.LinkedHashMap;
+
+    public class ElementModel {
+        private final String element;
+        private String value;
+        private ArrayList<ElementModel> nested;
+        private LinkedHashMap<String, String> attributes;
+
+        public ElementModel(String element) {
+            this.element = element;
+        }
+
+        public String getElement() {
+            return element;
+        }
+
+        public void setValue(String value) {
+            if (nested != null) {
+                throw new IllegalArgumentException("Cannot have both nested elements and a value");
+            }
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public boolean containsElements() {
+            return nested != null;
+        }
+
+        public void addNestedElement(ElementModel elem) {
+            if (value != null) {
+                throw new IllegalArgumentException("Cannot have both nested elements and a value");
+            }
+            if (nested == null) {
+                nested = new ArrayList<>();
+            }
+            nested.add(elem);
+        }
+
+        public ArrayList<ElementModel> getNested() {
+            return nested;
+        }
+
+        public boolean hasAttributes() {
+            return attributes != null;
+        }
+
+        public void addAttribute(String attrName, String attrValue) {
+            if (attributes == null) {
+                attributes = new LinkedHashMap<>();
+            }
+            attributes.put(attrName, attrValue);
+        }
+
+        public LinkedHashMap<String, String> getAttributes() {
+            return attributes;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("$");
+            sb.append("Element: ");
+            sb.append(element);
+            sb.append(" Attributes: ");
+            if (hasAttributes()) {
+                for (var entry : attributes.entrySet()) {
+                    sb.append(entry.getKey());
+                    sb.append(":");
+                    sb.append(entry.getValue());
+                    sb.append(" ");
+                }
+            } else {
+                sb.append("none ");
+            }
+            if (containsElements()) {
+                sb.append("Nested Elements: ");
+                sb.append("\n");
+                for (var elem : nested) {
+                    sb.append(elem.toString());
+                    sb.append("\n");
+                }
+            } else {
+                sb.append("Value: ");
+                sb.append(value);
+                sb.append(" ");
+            }
+            sb.append(element);
+            sb.append("$");
+            return sb.toString();
+        }
+    }
+
+  learner_created: true
+- name: src/converter/JSONComponents/JSONString.java
+  visible: true
+  text: |-
+    package converter.JSONComponents;
+
+    public class JSONString implements JSONComponent{
+        private final String str;
+
+        public JSONString(String str) {
+            this.str = str;
+        }
+
+        @Override
+        public String toString() {
+            return str;
+        }
+
+        @Override
+        public int hashCode() {
+            return str.hashCode();
+        }
+
+        @Override
+        public String JSONRepresentation() {
+            if (str == null) {
+                return null;
+            } else {
+                return '"' + str + '"';
+            }
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other.getClass() != JSONString.class) {
+                return false;
+            }
+            JSONString js = (JSONString) other;
+            return this.str.equals(js.str);
+        }
+    }
+  learner_created: true
+- name: src/converter/JSONComponents/JSONInteger.java
+  visible: true
+  text: |-
+    package converter.JSONComponents;
+
+    public class JSONInteger extends JSONNumber {
+        private final int num;
+
+        public JSONInteger(int num) {
+            this.num = num;
+        }
+
+        @Override
+        public String toString() {
+            return JSONRepresentation();
+        }
+
+        @Override
+        public String JSONRepresentation() {
+            return Integer.toString(num);
+        }
+    }
+  learner_created: true
+- name: src/converter/JSONComponents/JSONComponent.java
+  visible: true
+  text: |-
+    package converter.JSONComponents;
+
+    //Interface so JSONCharacter enum can be in the same list...not ideal, but AFAIK Java doesn't have an equivalent
+    //of the C++ variant library template...
+    public interface JSONComponent {
+        String JSONRepresentation();
+
+        default boolean isJSONPrimitive() {
+            return true;
+        }
+
+        default boolean isJSONArray() {
+            return false;
+        }
+
+        default boolean isJSONObject() {
+            return false;
+        }
+    }
+  learner_created: true
+- name: src/converter/XMLComponents/XMLSyntax.java
+  visible: true
+  text: |-
+    package converter.XMLComponents;
+
+    import java.util.Arrays;
+    import java.util.HashMap;
+    import java.util.Optional;
+    import java.util.function.Function;
+    import java.util.stream.Collectors;
+
+    public enum XMLSyntax implements XMLComponent {
+        XML_EQUALS('='),
+        XML_QUOTE('"'),
+        XML_LEFT_ANGLE_BRACKET('<'),
+        XML_RIGHT_ANGLE_BRACKET('>'),
+        XML_FORWARD_SLASH('/');
+
+        private static HashMap<Character, XMLSyntax> charMapping = Arrays.stream(XMLSyntax.values())
+                .collect(Collectors.toMap(XMLSyntax::getField, Function.identity(), (e, r) -> e, HashMap::new));
+
+        private char field;
+
+        XMLSyntax(char field) {
+            this.field = field;
+        }
+
+        public char getField() {
+            return field;
+        }
+
+        public static Optional<XMLSyntax> getByField(char field) {
+            return Optional.ofNullable(charMapping.get(field));
+        }
+
+    }
+  learner_created: true
+- name: src/converter/Pair.java
+  visible: true
+  text: |2-
+
+    package converter;
+
+    public class Pair<T, U> {
+        private final T t;
+        private final U u;
+
+        public Pair(T t, U u) {
+            this.t = t;
+            this.u = u;
+        }
+
+        public T getFirst() {
+            return t;
+        }
+
+        public U getSecond() {
+            return u;
+        }
+    }
+  learner_created: true
+- name: src/converter/JSONComponents/JSONNull.java
+  visible: true
+  text: |2-
+
+    package converter.JSONComponents;
+
+    public class JSONNull implements JSONComponent{
+        @Override
+        public String toString() {
+            return null;
+        }
+
+        @Override
+        public String JSONRepresentation() {
+            return null;
+        }
+    }
+  learner_created: true
+- name: src/converter/XMLComponents/XMLContentString.java
+  visible: true
+  text: |-
+    package converter.XMLComponents;
+
+    public class XMLContentString extends XMLContent {
+        private String contentString;
+
+        public XMLContentString(String contentString) {
+            this.contentString = contentString;
+        }
+
+        public String getContentString() {
+            return contentString;
+        }
+
+        public void setContentString(String contentString) {
+            this.contentString = contentString;
+        }
+
+        @Override
+        public boolean isContentString() {
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return contentString;
+        }
+    }
+  learner_created: true
+- name: src/converter/XMLComponents/XMLContent.java
+  visible: true
+  text: |-
+    package converter.XMLComponents;
+
+    public abstract class XMLContent implements  XMLComponent{
+        public boolean isTag() {
+            return false;
+        }
+
+        public boolean isContentString() {
+            return false;
+        }
+    }
+  learner_created: true
+- name: src/converter/XMLParser/XMLParser.java
+  visible: true
+  text: |-
+    package converter.XMLParser;
+
+
+    import converter.Pair;
+    import converter.XMLComponents.XMLAttribute;
+    import converter.XMLComponents.XMLContent;
+    import converter.XMLComponents.XMLContentString;
+    import converter.XMLComponents.XMLSyntax;
+    import converter.XMLComponents.XMLTag;
+
+    import java.util.ArrayList;
+    import java.util.HashSet;
+    import java.util.stream.Collectors;
+    import java.util.stream.Stream;
+
+    public class XMLParser {
+        private static final HashSet<Character> whiteSpace = Stream.of(' ', '\t', '\b', '\n', '\r')
+                .collect(Collectors.toCollection(HashSet::new));
+
+        public static Pair<? extends XMLContent, Integer> parse(String XML, int currentPos) {
+            //Handle possible invalid input
+            if (XML.isEmpty() || XML.isBlank()) {
+                throw new IllegalArgumentException("Invalid XML passed: " + XML);
+            } else if (currentPos >= XML.length()) {
+                throw new IllegalArgumentException("Invalid currentPos: " + currentPos + " but XML length is: " + XML.length());
+            }
+
+            var current = XMLSyntax.getByField(XML.charAt(currentPos));
+            var next = XMLSyntax.getByField(XML.charAt(currentPos + 1));
+            if (current.isPresent() && current.get() == XMLSyntax.XML_LEFT_ANGLE_BRACKET
+                    && next.isEmpty()) {
+                return parseTag(XML, currentPos);
+            } else if (current.isPresent() && current.get() == XMLSyntax.XML_LEFT_ANGLE_BRACKET
+                    && next.get() == XMLSyntax.XML_FORWARD_SLASH) {
+                return null;
+            } else {
+                StringBuilder content = new StringBuilder();
+                //append until encountering start closing tag
+                while (!(current.isPresent() && current.get() == XMLSyntax.XML_LEFT_ANGLE_BRACKET
+                        && next.isPresent() && next.get() == XMLSyntax.XML_FORWARD_SLASH)) {
+                    content.append(XML.charAt(currentPos));
+                    ++currentPos;
+                    current = XMLSyntax.getByField(XML.charAt(currentPos));
+                    next = XMLSyntax.getByField(XML.charAt(currentPos + 1));
+                }
+                return new Pair<>(new XMLContentString(content.toString()), currentPos);
+            }
+        }
+
+        //Invoke upon encountering '<'
+        public static Pair<XMLTag, Integer> parseTag(String XML, int currentPos) {
+            //Handle possible invalid input
+            if (XML.isEmpty() || XML.isBlank()) {
+                throw new IllegalArgumentException("Invalid XML passed: " + XML);
+            } else if (currentPos >= XML.length()) {
+                throw new IllegalArgumentException("Invalid currentPos: " + currentPos + " but XML length is: " + XML.length());
+            } else if (XMLSyntax.getByField(XML.charAt(currentPos)).get() != XMLSyntax.XML_LEFT_ANGLE_BRACKET) {
+                throw new IllegalArgumentException("charAt currentPos of XML is: " + XML.charAt(currentPos) + " but parsed tag must" +
+                        " begin with '<'!");
+            }
+            ++currentPos;
+
+            XMLTag tag = new XMLTag();
+            //Discard any whitespace up to first string, which should be element
+            currentPos = discardWhitespace(XML, currentPos);
+            StringBuilder element = new StringBuilder();
+            while (!whiteSpace.contains(XML.charAt(currentPos)) && XMLSyntax.getByField(XML.charAt(currentPos)).isEmpty()) {
+                element.append(XML.charAt(currentPos));
+                ++currentPos;
+            }
+            tag.setElement(element.toString());
+            currentPos = discardWhitespace(XML, currentPos);
+
+            //need to parse attributes
+            if (XMLSyntax.getByField(XML.charAt(currentPos)).isEmpty()) {
+                var current = XMLSyntax.getByField(XML.charAt(currentPos));
+                while (current.isEmpty()
+                        || (current.get() != XMLSyntax.XML_RIGHT_ANGLE_BRACKET
+                        && current.get() != XMLSyntax.XML_FORWARD_SLASH)) {
+                    XMLAttribute attr = new XMLAttribute();
+                    StringBuilder attribute = new StringBuilder();
+                    while (!(whiteSpace.contains(XML.charAt(currentPos)) || XML.charAt(currentPos) == '=')) {
+                        attribute.append(XML.charAt(currentPos));
+                        ++currentPos;
+                    }
+                    attr.setAttribute(attribute.toString());
+                    currentPos = discardWhitespace(XML, currentPos);
+                    if (XML.charAt(currentPos) != '=')
+                        throw new IllegalArgumentException("Expected '=' between attribute and value, found " + XML.charAt(currentPos));
+                    ++currentPos;
+                    currentPos = discardWhitespace(XML, currentPos);
+                    if (XML.charAt(currentPos) != '"') {
+                        throw new IllegalArgumentException("Expected '\"' to surround attribute value, found " + XML.charAt(currentPos));
+                    }
+                    StringBuilder value = new StringBuilder();
+                    ++currentPos;
+                    while (XML.charAt(currentPos) != '"') {
+                        value.append(XML.charAt(currentPos));
+                        ++currentPos;
+                    }
+                    ++currentPos;
+                    currentPos = discardWhitespace(XML, currentPos);
+                    attr.setValue(value.toString());
+                    if (tag.hasAttributes()) {
+                        tag.getAttributes().add(attr);
+                    } else {
+                        tag.setAttributes(Stream.of(attr).collect(Collectors.toCollection(ArrayList::new)));
+                    }
+                    current = XMLSyntax.getByField(XML.charAt(currentPos));
+                }
+            }
+
+            //Handle content, if any
+            if (XMLSyntax.getByField(XML.charAt(currentPos)).get() == XMLSyntax.XML_FORWARD_SLASH
+                    && XMLSyntax.getByField(XML.charAt(currentPos + 1)).isPresent()
+                    && XMLSyntax.getByField(XML.charAt(currentPos + 1)).get() == XMLSyntax.XML_RIGHT_ANGLE_BRACKET) //no content
+            {
+                return new Pair<>(tag, currentPos + 2);
+            } else if (XMLSyntax.getByField(XML.charAt(currentPos)).get() == XMLSyntax.XML_RIGHT_ANGLE_BRACKET) { //content to parse
+                // System.out.println("Parsing from element: " + element + " currentpos: " + currentPos  + " " + XML.substring(currentPos));
+                currentPos = discardWhitespace(XML, ++currentPos);
+                var content = parse(XML, currentPos);
+                if (content == null)  //empty tag case
+                    tag.setContent(new ArrayList<>());
+                else {
+                    tag.addContent(content.getFirst());
+                    currentPos = discardWhitespace(XML, content.getSecond());
+                }
+                var current = XMLSyntax.getByField(XML.charAt(currentPos));
+                var next = XMLSyntax.getByField(XML.charAt(currentPos + 1));
+                while (!(current.isPresent() && current.get() == XMLSyntax.XML_LEFT_ANGLE_BRACKET
+                        && next.isPresent() && next.get() == XMLSyntax.XML_FORWARD_SLASH
+                        && XML.substring(currentPos + 2, currentPos + 2 + tag.getElement().length()).equals(tag.getElement()))) {
+                    //System.out.println("Parsing from element: " + element + " currentpos: " + currentPos  + " " + XML.substring(currentPos));
+                    //System.out.println("Content: " + tag.getContent());
+                    content = parse(XML, currentPos);
+                    tag.addContent(content.getFirst());
+                    currentPos = discardWhitespace(XML, content.getSecond());
+                    current = XMLSyntax.getByField(XML.charAt(currentPos));
+                    next = XMLSyntax.getByField(XML.charAt(currentPos + 1));
+                }
+                //currentPos is now at the '<' position of the tag's closing tag, so need to iterate to end
+                while (!(current.isPresent() && current.get() == XMLSyntax.XML_RIGHT_ANGLE_BRACKET)) {
+                    ++currentPos;
+                    current = XMLSyntax.getByField(XML.charAt(currentPos));
+                }
+                return new Pair<>(tag, ++currentPos);
+            } else {
+                throw new IllegalArgumentException("Expected tag to close!");
+            }
+        }
+
+        private static int discardWhitespace(String XML, int currentPos) {
+            while (whiteSpace.contains(XML.charAt(currentPos))) {
+                ++currentPos;
+            }
+            return currentPos;
+        }
+    }
+  learner_created: true
+- name: src/converter/XMLComponents/XMLAttribute.java
+  visible: true
+  text: |-
+    package converter.XMLComponents;
+
+    public class XMLAttribute implements XMLComponent {
+        private String attribute;
+        private String value;
+
+        public XMLAttribute() {}
+
+        public XMLAttribute(String attribute, String value) {
+            this.attribute = attribute;
+            this.value = value;
+        }
+
+        public String getAttribute() {
+            return attribute;
+        }
+
+        public void setAttribute(String attribute) {
+            this.attribute = attribute;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(attribute);
+            sb.append(" = ");
+            sb.append('"');
+            sb.append(value);
+            sb.append('"');
+            return sb.toString();
+        }
+    }
+  learner_created: true
+- name: src/converter/XMLComponents/XMLTag.java
+  visible: true
+  text: |-
+    package converter.XMLComponents;
+
+    import java.util.ArrayList;
+
+    public class XMLTag extends XMLContent {
+        private String element;
+        private ArrayList<XMLAttribute> attributes;
+        private ArrayList<XMLContent> content;
+
+        public String getElement() {
+            return element;
+        }
+
+        public void setElement(String element) {
+            this.element = element;
+        }
+
+        public boolean hasAttributes() {
+            return attributes != null;
+        }
+
+        public void addAttribute(XMLAttribute attribute) {
+            if (attributes == null)
+                attributes = new ArrayList<>();
+            attributes.add(attribute);
+        }
+
+        public ArrayList<XMLAttribute> getAttributes() {
+            return attributes;
+        }
+
+        public void setAttributes(ArrayList<XMLAttribute> attributes) {
+            this.attributes = attributes;
+        }
+
+        public boolean hasContent() {
+            return content != null;
+        }
+
+        public ArrayList<XMLContent> getContent() {
+            return content;
+        }
+
+        public void setContent(ArrayList<XMLContent> content) {
+            this.content = content;
+        }
+
+        public void addContent(XMLContent xml) {
+            if (content == null)
+                content = new ArrayList<>();
+            content.add(xml);
+        }
+
+        @Override
+        public boolean isTag() {
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append('<');
+            sb.append(element);
+            if (hasAttributes()) {
+                sb.append(' ');
+                for (int i = 0; i < attributes.size(); ++i) {
+                    sb.append(attributes.get(i));
+                    if (i != attributes.size() - 1)
+                        sb.append(' ');
+                }
+            }
+            if (hasContent()) {
+                sb.append('>');
+                //System.out.println("Element: " + element + " content: " + content);
+                for (XMLContent c : content) {
+                    sb.append(c);
+                }
+                sb.append("</");
+                sb.append(element);
+                sb.append(">");
+            } else
+                sb.append("/>");
+            return sb.toString();
+        }
+    }
+  learner_created: true
+- name: src/converter/JSONComponents/JSONArray.java
+  visible: true
+  text: |-
+    package converter.JSONComponents;
+
+    import java.util.ArrayList;
+
+    public class JSONArray extends JSONContainer {
+        private final ArrayList<JSONComponent> elements;
+
+        public JSONArray() {
+            elements = new ArrayList<>();
+        }
+
+        public JSONComponent[] getElements() {
+            return (JSONComponent[]) elements.toArray();
+        }
+
+        public void add(JSONComponent jc) {
+            elements.add(jc);
+        }
+
+
+        @Override
+        public boolean isJSONPrimitive() {
+            return false;
+        }
+
+        @Override
+        public boolean isJSONArray() {
+            return true;
+        }
+
+        @Override
+        public String JSONRepresentation() {
+            StringBuilder sb = new StringBuilder();
+            sb.append('[');
+            for (int i = 0; i < elements.size(); ++i) {
+                sb.append(' ');
+                sb.append(elements.get(i).JSONRepresentation());
+                if (i != elements.size() - 1)
+                    sb.append(',');
+            }
+            sb.append(']');
+            return sb.toString();
+        }
+    }
+  learner_created: true
+- name: src/converter/JSONParser/JSONLexer.java
+  visible: true
+  text: |-
+    package converter.JSONParser;
+
+
+    import converter.JSONComponents.JSONBoolean;
+    import converter.JSONComponents.JSONCharacter;
+    import converter.JSONComponents.JSONComponent;
+    import converter.JSONComponents.JSONFloat;
+    import converter.JSONComponents.JSONInteger;
+    import converter.JSONComponents.JSONNull;
+    import converter.JSONComponents.JSONNumber;
+    import converter.JSONComponents.JSONString;
+    import converter.Pair;
+
+    import java.util.ArrayList;
+    import java.util.Arrays;
+    import java.util.HashSet;
+    import java.util.List;
+    import java.util.Optional;
+    import java.util.stream.Collectors;
+    import java.util.stream.IntStream;
+    import java.util.stream.Stream;
+
+    public class JSONLexer {
+        private static HashSet<Character> JSONWhitespace;
+        private static HashSet<Character> JSONSyntax;
+        private static HashSet<Character> JSONNumberCharacters;
+
+        static {
+            JSONWhitespace = Stream.of(' ', '\t', '\b', '\n', '\r')
+                    .collect(Collectors.toCollection(HashSet::new));
+            JSONSyntax = Arrays.stream(JSONCharacter.values())
+                    .map(JSONCharacter::getField)
+                    .collect(Collectors.toCollection(HashSet::new));
+            JSONNumberCharacters = Stream.concat(
+                    Stream.of('-', 'e', '.'),
+                    IntStream.range(0, 10)
+                            .mapToObj(i -> Character.valueOf((char) ('0' + i))))
+                    .collect(Collectors.toCollection(HashSet::new));
+
+        }
+
+        public static Optional<Pair<JSONString, String>> lexString(String input) {
+            StringBuilder sb = new StringBuilder();
+            if (JSONCharacter.JSON_QUOTE.getField() != input.charAt(0)) {
+                return Optional.empty();
+            }
+            input = input.substring(1);
+            input.chars()
+                    .takeWhile(c -> JSONCharacter.JSON_QUOTE.getField() != (char) c)
+                    .forEachOrdered(c -> sb.append((char) c));
+            if (sb.length() == input.length()) {
+                throw new IllegalArgumentException("Failed to reach terminal \" at end of input String");
+            } else {
+                return Optional.of(new Pair<>(new JSONString(sb.toString()), input.substring(sb.length() + 1)));
+            }
+        }
+
+        public static Optional<Pair<JSONNumber, String>> lexNumber(String input) {
+            StringBuilder sb = new StringBuilder();
+            input.chars().takeWhile(c -> JSONNumberCharacters.contains((char) c))
+                    .forEachOrdered(c -> sb.append((char) c));
+            input = input.substring(sb.length());
+            if (sb.length() == 0) {
+                return Optional.empty();
+            } else {
+                JSONNumber jn;
+                if (sb.toString().contains(".")) {
+                    jn = new JSONFloat(Double.parseDouble(sb.toString()));
+                } else {
+                    jn = new JSONInteger(Integer.parseInt(sb.toString()));
+                }
+                return Optional.of(new Pair<>(jn, input));
+            }
+        }
+
+        public static Optional<Pair<JSONBoolean, String>> lexBoolean(String input) {
+            if (input.startsWith("true")) {
+                return Optional.of(new Pair<>(new JSONBoolean(true), input.substring(4)));
+            } else if (input.startsWith("false")) {
+                return Optional.of(new Pair<>(new JSONBoolean(false), input.substring(5)));
+            } else {
+                return Optional.empty();
+            }
+        }
+
+        public static Optional<String> lexNull(String input) {
+            if (input.startsWith("null")) {
+                return Optional.of(input.substring(4));
+            } else {
+                return Optional.empty();
+            }
+        }
+
+        public static List<JSONComponent> lex(String input) {
+            List<JSONComponent> tokens = new ArrayList<>();
+            while (!input.isEmpty()) {
+                var jsonString = lexString(input);
+                if (jsonString.isPresent()) {
+                    tokens.add(jsonString.get().getFirst());
+                    input = jsonString.get().getSecond();
+                    continue;
+                }
+                var jsonNumber = lexNumber(input);
+                if (jsonNumber.isPresent()) {
+                    tokens.add(jsonNumber.get().getFirst());
+                    input = jsonNumber.get().getSecond();
+                    continue;
+                }
+                var jsonBoolean = lexBoolean(input);
+                if (jsonBoolean.isPresent()) {
+                    tokens.add(jsonBoolean.get().getFirst());
+                    input = jsonBoolean.get().getSecond();
+                    continue;
+                }
+                var jsonNull = lexNull(input);
+                if (jsonNull.isPresent()) {
+                    tokens.add(new JSONNull());
+                    input = jsonNull.get();
+                    continue;
+                }
+                char leadChar = input.charAt(0);
+                input = input.substring(1);
+                if (JSONWhitespace.contains(leadChar)) {
+                    continue;
+                } else if (JSONSyntax.contains(leadChar)) {
+                    tokens.add(JSONCharacter.charLookup(leadChar).get());
+                } else {
+                    throw new IllegalArgumentException("Unexpected character: " + leadChar);
+                }
+            }
+            return tokens;
+        }
+    }
+  learner_created: true
+- name: src/converter/JSONComponents/JSONContainer.java
+  visible: true
+  text: |2-
+
+    package converter.JSONComponents;
+
+    public abstract class JSONContainer implements JSONComponent {
+    }
+  learner_created: true
+- name: src/converter/JSONComponents/JSONObject.java
+  visible: true
+  text: |-
+    package converter.JSONComponents;
+
+    import java.util.ArrayList;
+    import java.util.LinkedHashMap;
+    import java.util.stream.Collectors;
+
+    public class JSONObject extends JSONContainer {
+        private LinkedHashMap<JSONString, JSONComponent> mappings;
+
+        public JSONObject() {
+            mappings = new LinkedHashMap<>();
+        }
+
+        public boolean hasField(String field) {
+            return mappings.containsKey(new JSONString(field));
+        }
+
+        public JSONComponent getValue(String field) {
+            return mappings.get(new JSONString(field));
+        }
+
+        public LinkedHashMap<JSONString, JSONComponent> getMappings() {
+            return mappings;
+        }
+
+        public void purgeAttributes() {
+            //Delete empty keys and those keys that are duplicates when symbols removed
+            ArrayList<JSONString> keys = new ArrayList<>(mappings.keySet());
+            for (var key : keys) {
+                String sk = key.toString();
+                if (sk.isEmpty() || "@".equals(sk) || "#".equals(sk)) {
+                    mappings.remove(key);
+                }
+                if ((sk.startsWith("@") || sk.startsWith("#")) && sk.length() >= 2 && mappings.containsKey(new JSONString(sk.substring(1)))) {
+                    mappings.remove(key);
+                }
+            }
+
+            //Reassemble map
+            mappings = mappings.entrySet().stream()
+                    .collect(Collectors.toMap(
+                            e -> {
+                                String key = e.getKey().toString();
+                                if ((key.startsWith("@") || key.startsWith("#")) && key.length() >= 2)
+                                    return new JSONString(key.substring(1));
+                                else
+                                    return e.getKey();
+                            },
+                            e -> e.getValue(),
+                            (k1, k2) -> k1,
+                            LinkedHashMap::new
+                    ));
+        }
+
+        public void add(JSONString key, JSONComponent value) {
+            mappings.put(key, value);
+        }
+
+        @Override
+        public boolean isJSONPrimitive() {
+            return false;
+        }
+
+        @Override
+        public boolean isJSONObject() {
+            return true;
+        }
+
+        @Override
+        public String JSONRepresentation() {
+            StringBuilder sb = new StringBuilder();
+            sb.append('{');
+            var es = mappings.entrySet();
+            for (var it = es.iterator(); it.hasNext(); ) {
+                var entry = it.next();
+                sb.append(" " + entry.getKey().JSONRepresentation());
+                sb.append(" :");
+                sb.append(" " + entry.getValue().JSONRepresentation());
+                if (it.hasNext()) {
+                    sb.append(',');
+                }
+            }
+            sb.append('}');
+            return sb.toString();
+        }
+    }
+  learner_created: true
+- name: src/converter/JSONParser/JSONParser.java
+  visible: true
+  text: |-
+    package converter.JSONParser;
+
+    import converter.JSONComponents.JSONArray;
+    import converter.JSONComponents.JSONCharacter;
+    import converter.JSONComponents.JSONComponent;
+    import converter.JSONComponents.JSONObject;
+    import converter.JSONComponents.JSONString;
+    import converter.Pair;
+
+    import java.util.List;
+
+    public class JSONParser {
+        public static Pair<? extends JSONComponent, Integer> parse(List<JSONComponent> tokens, int currentIndex) {
+            JSONComponent currentToken = tokens.get(currentIndex);
+            if (currentToken.getClass() == JSONCharacter.class) {
+                if (currentToken == JSONCharacter.JSON_BRACKET_LEFT) {
+                    return parseArray(tokens, ++currentIndex);
+                } else if (currentToken == JSONCharacter.JSON_BRACE_LEFT) {
+                    return parseObject(tokens, ++currentIndex);
+                }
+            }
+            return new Pair<>(currentToken, ++currentIndex);
+        }
+
+        public static Pair<JSONArray, Integer> parseArray(List<JSONComponent> tokens, int currentIndex) {
+            JSONArray ja = new JSONArray();
+            if (tokens == null || tokens.isEmpty()) {
+                throw new IllegalArgumentException("List tokens is invalid!");
+            }
+            if (currentIndex >= tokens.size()) {
+                throw new IllegalArgumentException("Expected terminating ']'");
+            }
+            if (tokens.get(currentIndex) == JSONCharacter.JSON_BRACKET_RIGHT) {
+                return new Pair<>(ja, currentIndex);
+            }
+            while (true) {
+                var pair = parse(tokens, currentIndex);
+                ja.add(pair.getFirst());
+                currentIndex = pair.getSecond();
+                JSONComponent currentToken = tokens.get(currentIndex);
+                if (currentToken.getClass() == JSONCharacter.class) {
+                    if (currentToken == JSONCharacter.JSON_BRACKET_RIGHT)
+                        return new Pair<>(ja, ++currentIndex);
+                    else if (currentToken != JSONCharacter.JSON_COMMA) {
+                        throw new IllegalArgumentException("Expected comma character after object in JSONArray!");
+                    } else {
+                        ++currentIndex;
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected JSONCharacter ',' or ']' after array entry");
+                }
+            }
+
+        }
+
+        public static Pair<JSONObject, Integer> parseObject(List<JSONComponent> tokens, int currentIndex) {
+            JSONObject obj = new JSONObject();
+            JSONComponent currentToken = tokens.get(currentIndex);
+            if (currentToken.getClass() == JSONCharacter.class && currentToken == JSONCharacter.JSON_BRACE_RIGHT)
+                return new Pair<>(obj, ++currentIndex);
+            while (true) {
+                var key = tokens.get(currentIndex);
+                if (key.getClass() == JSONString.class) {
+                    ++currentIndex;
+                } else {
+                    throw new IllegalArgumentException("Expected String key in JSONObject, found " + key.getClass());
+                }
+                if (tokens.get(currentIndex).getClass() != JSONCharacter.class || tokens.get(currentIndex) != JSONCharacter.JSON_COLON) {
+                    throw new IllegalArgumentException("Expected colon after key in JSONObject, found " + tokens.get(currentIndex).getClass());
+                }
+                var value = parse(tokens, ++currentIndex);
+                obj.add((JSONString) key, value.getFirst());
+                currentIndex = value.getSecond();
+                currentToken = tokens.get(currentIndex);
+                if (currentToken.getClass() == JSONCharacter.class && currentToken == JSONCharacter.JSON_BRACE_RIGHT) {
+                    return new Pair<>(obj, ++currentIndex);
+                } else if (currentToken.getClass() != JSONCharacter.class || currentToken != JSONCharacter.JSON_COMMA) {
+                    throw new IllegalArgumentException("Expected comma after pair in JSONObject, found " + currentToken.getClass());
+                } else {
+                    ++currentIndex;
+                }
+            }
+        }
+    }
+  learner_created: true
+- name: src/converter/JSONComponents/JSONCharacter.java
+  visible: true
+  text: |-
+    package converter.JSONComponents;
+
+    import java.util.Arrays;
+    import java.util.HashMap;
+    import java.util.Map;
+    import java.util.Optional;
+    import java.util.function.Function;
+    import java.util.stream.Collectors;
+
+    public enum JSONCharacter implements JSONComponent{
+        JSON_COMMA(','),
+        JSON_COLON(':'),
+        JSON_BRACKET_LEFT('['),
+        JSON_BRACKET_RIGHT(']'),
+        JSON_BRACE_LEFT('{'),
+        JSON_BRACE_RIGHT('}'),
+        JSON_QUOTE('"');
+
+        private static final Map<Character, JSONCharacter> charToJSONMap;
+
+        static {
+            charToJSONMap = Arrays.stream(JSONCharacter.values())
+                    .collect(Collectors.toMap(JSONCharacter::getField, Function.identity(), (e, r) -> e, HashMap::new));
+        }
+
+        private final char field;
+
+        JSONCharacter(char field) {
+            this.field = field;
+        }
+
+        public char getField() {
+            return this.field;
+        }
+
+        public static Optional<JSONCharacter> charLookup(char c) {
+            return charToJSONMap.containsKey(c) ? Optional.of(charToJSONMap.get(c)) : Optional.empty();
+        }
+
+        @Override
+        public String toString() {
+            return JSONRepresentation();
+        }
+
+        @Override
+        public String JSONRepresentation() {
+            return Character.toString(this.field);
+        }
+    }
+  learner_created: true
+- name: src/converter/ElementModel/ConverterUtilities.java
+  visible: true
+  text: |-
+    package converter.ElementModel;
+
+
+    import converter.JSONComponents.JSONComponent;
+    import converter.JSONComponents.JSONNull;
+    import converter.JSONComponents.JSONObject;
+    import converter.JSONComponents.JSONString;
+    import converter.JSONParser.JSONLexer;
+    import converter.JSONParser.JSONParser;
+    import converter.Pair;
+    import converter.XMLComponents.XMLAttribute;
+    import converter.XMLComponents.XMLComponent;
+    import converter.XMLComponents.XMLContent;
+    import converter.XMLComponents.XMLContentString;
+    import converter.XMLComponents.XMLTag;
+    import converter.XMLParser.XMLParser;
+
+    import java.util.function.Consumer;
+
+    public class ConverterUtilities {
+        public static void convert(String fileInput) {
+            if (fileInput.startsWith("{")) {
+                JSONComponent comp = JSONParser.parse(JSONLexer.lex(fileInput), 0).getFirst();
+                if (!comp.isJSONObject()) {
+                    throw new IllegalArgumentException("Expected JSONObject from file!");
+                }
+                JSONObject obj = (JSONObject) comp;
+                //System.out.println("PARSED OBJECT: ");
+                //System.out.println(comp.JSONRepresentation());
+                ElementModel model = convertJSONToElementModel(obj);
+                //System.out.println("ELEMENT MODEL: ");
+                //System.out.println(model);
+                System.out.println(convertElementModelToXML(model).toString());
+            } else if (fileInput.startsWith("<")) {
+                XMLTag tag = (XMLTag) XMLParser.parseTag(fileInput, 0).getFirst();
+                //System.out.println("PARSED OBJECT: ");
+                //System.out.println(tag);
+                ElementModel model = convertXMLToElementModel(tag);
+                //System.out.println("ELEMENT MODEL :");
+                //System.out.println(model);
+                System.out.println(convertElementModelToJSON(model, true).JSONRepresentation());
+            } else {
+                throw new IllegalArgumentException("Input is neither valid JSON nor XML");
+            }
+        }
+
+        private static XMLTag convertElementModelToXML(ElementModel top) {
+            XMLTag tag = new XMLTag();
+            tag.setElement(top.getElement());
+            if (top.hasAttributes()) {
+                for (var entry : top.getAttributes().entrySet()) {
+                    tag.addAttribute(new XMLAttribute(entry.getKey(), (entry.getValue() == null ? "" : entry.getValue())));
+                }
+            }
+            if (top.containsElements()) {
+                for (var elem : top.getNested()) {
+                    tag.addContent(convertElementModelToXML(elem));
+                }
+            } else
+            if (top.getValue() != null) {
+                tag.addContent(new XMLContentString(top.getValue()));
+            }
+            return tag;
+        }
+
+        private static ElementModel convertXMLToElementModel(XMLTag tag) {
+            ElementModel top = new ElementModel(tag.getElement());
+            if (tag.hasAttributes()) {
+                for (XMLAttribute attr : tag.getAttributes()) {
+                    top.addAttribute(attr.getAttribute(), attr.getValue());
+                }
+            }
+            if (tag.hasContent()) {
+                if (tag.getContent().isEmpty()) {
+                    top.setValue("");
+                } else if (tag.getContent().size() == 1 && tag.getContent().get(0).isContentString()) {
+                    top.setValue(((XMLContentString) tag.getContent().get(0)).getContentString());
+                } else {
+                    for (XMLContent content : tag.getContent()) {
+                        if (!content.isTag()) {
+                            throw new IllegalArgumentException("Should've been a tag!");
+                        }
+                        top.addNestedElement(convertXMLToElementModel((XMLTag) content));
+                    }
+                }
+            }
+            return top;
+        }
+
+        private static JSONObject convertElementModelToJSON(ElementModel top, boolean first) {
+            JSONObject json = new JSONObject();
+            if (top.hasAttributes()) {
+                Consumer<JSONObject> attrBuilder = attr -> {
+                    for (var entry : top.getAttributes().entrySet()) {
+                        attr.add(new JSONString("@" + entry.getKey()), new JSONString(entry.getValue()));
+                    }
+                    if (top.containsElements()) {
+                        JSONObject attrValue = new JSONObject();
+                        for (var element : top.getNested()) {
+                            if (element.hasAttributes() || element.containsElements()) {
+                                attrValue.add(new JSONString(element.getElement()), convertElementModelToJSON(element, false));
+                            } else {
+                                attrValue.add(new JSONString(element.getElement()), new JSONString(element.getValue()));
+                            }
+                        }
+                        attr.add(new JSONString("#" + top.getElement()), attrValue);
+                    } else {
+                        attr.add(new JSONString("#" + top.getElement()), new JSONString(top.getValue()));
+                    }
+                };
+                if (first) {
+                    JSONObject attr = new JSONObject();
+                    attrBuilder.accept(attr);
+                    json.add(new JSONString(top.getElement()), attr);
+                } else {
+                    attrBuilder.accept(json);
+                }
+            } else if (top.containsElements()) {
+                Consumer<JSONObject> nestedBuilder = nested -> {
+                    for (var element : top.getNested()) {
+                        if (element.hasAttributes() || element.containsElements()) {
+                            nested.add(new JSONString(element.getElement()), convertElementModelToJSON(element, false));
+                        } else {
+                            nested.add(new JSONString(element.getElement()), new JSONString(element.getValue()));
+                        }
+                    }
+                };
+                if (first) {
+                    JSONObject nested = new JSONObject();
+                    nestedBuilder.accept(nested);
+                    json.add(new JSONString(top.getElement()), nested);
+                } else {
+                    nestedBuilder.accept(json);
+                }
+            } else {
+                json.add(new JSONString(top.getElement()), new JSONString(top.getValue()));
+            }
+            return json;
+        }
+
+        private static ElementModel convertJSONToElementModel(JSONObject json) {
+            if (json.getMappings().size() == 0) {
+                throw new IllegalArgumentException("Malformed JSONObject passed for conversion; contains no mapping!");
+            } else if (json.getMappings().size() == 1) {
+                var entry = json.getMappings().entrySet().stream().findFirst().get();
+                if (entry.getValue().isJSONObject()) {
+                    return convertJSONToElementModelImpl(entry.getKey().toString(), (JSONObject) entry.getValue());
+                } else if (entry.getValue().isJSONPrimitive()) {
+                    ElementModel temp = new ElementModel(entry.getKey().toString());
+                    temp.setValue(entry.getValue().toString());
+                    return temp;
+                } else {
+                    throw new IllegalArgumentException("No implementation defined for JSONArrays");
+                }
+            } else {
+                return convertJSONToElementModelImpl("root", json);
+            }
+        }
+
+        private static ElementModel convertJSONToElementModelImpl(String key, JSONObject json) {
+            ElementModel top = new ElementModel(key);
+
+            if (json.getMappings().isEmpty()) {
+                top.setValue("");
+                return top;
+            }
+
+            if (isValidAttributeObject(json, key)) {
+                for (var entry : json.getMappings().entrySet()) {
+                    if (entry.getKey().toString().startsWith("@")) {
+                        top.addAttribute(entry.getKey().toString().substring(1), entry.getValue().toString());
+                    } else if (entry.getKey().toString().startsWith("#")) {
+                        if (entry.getValue().isJSONPrimitive()) {
+                            top.setValue(entry.getValue().toString());
+                        } else if (entry.getValue().isJSONObject()) {
+                            JSONObject valueObj = (JSONObject) entry.getValue();
+                            for (var nestedEntry : valueObj.getMappings().entrySet()) {
+                                if (nestedEntry.getValue().isJSONPrimitive()) {
+                                    ElementModel elem = new ElementModel(nestedEntry.getKey().toString());
+                                    elem.setValue(nestedEntry.getValue().toString());
+                                    top.addNestedElement(elem);
+                                } else if (nestedEntry.getValue().isJSONObject())
+                                    top.addNestedElement(convertJSONToElementModelImpl(nestedEntry.getKey().toString(), (JSONObject) nestedEntry.getValue()));
+                                else {
+                                    throw new IllegalArgumentException("No specification provided for JSONArrays");
+                                }
+                            }
+                        } else {
+                            throw new IllegalArgumentException("No specification provided for JSONArrays");
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Malformed JSON with attribute object passed test function!");
+                    }
+                }
+            } else {
+                //cleanup any illegal/malformed symbols
+                json.purgeAttributes();
+
+                for (var entry : json.getMappings().entrySet()) {
+                    if (entry.getValue().isJSONPrimitive()) {
+                        ElementModel nested = new ElementModel(entry.getKey().toString());
+                        nested.setValue(entry.getValue().toString());
+                        top.addNestedElement(nested);
+                    } else if (entry.getValue().isJSONObject()) {
+                        top.addNestedElement(convertJSONToElementModelImpl(entry.getKey().toString(), (JSONObject) entry.getValue()));
+                    } else {
+                        throw new IllegalArgumentException("No specification provided for JSONArray");
+                    }
+                }
+            }
+            return top;
+        }
+
+        private static boolean isValidAttributeObject(JSONObject object, String key) {
+            if (!object.hasField("#" + key)) {
+                return false;
+            }
+            for (var entry : object.getMappings().entrySet()) {
+                String entryKey = entry.getKey().toString();
+                if (entryKey.startsWith("#") && !entryKey.equals("#" + key)) {
+                    return false;
+                }
+                if (!entryKey.equals("#" + key)) {
+                    if (!(entryKey.startsWith("@") && entryKey.length() >= 2)) {
+                        return false;
+                    }
+                    if (!entry.getValue().isJSONPrimitive()) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+  learner_created: true
+feedback_link: https://hyperskill.org/projects/61/stages/334/implement
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/61/stages/334/implement">JetBrains
+    Academy</a>
+  time: Sun, 12 Sep 2021 19:12:28 UTC
+record: -1

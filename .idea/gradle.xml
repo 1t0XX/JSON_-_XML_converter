@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="delegatedBuild" value="false" />
+        <option name="testRunner" value="GRADLE" />
+        <option name="distributionType" value="WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/JSON - XML converter/task" />
+            <option value="$PROJECT_DIR$/Problems/Account" />
+            <option value="$PROJECT_DIR$/Problems/Account and its owner" />
+            <option value="$PROJECT_DIR$/Problems/Adding values" />
+            <option value="$PROJECT_DIR$/Problems/Application as a class" />
+            <option value="$PROJECT_DIR$/Problems/Are siblings" />
+            <option value="$PROJECT_DIR$/Problems/Area of a circle" />
+            <option value="$PROJECT_DIR$/Problems/Army" />
+            <option value="$PROJECT_DIR$/Problems/Avoid NPE" />
+            <option value="$PROJECT_DIR$/Problems/Avoid NPE with strings" />
+            <option value="$PROJECT_DIR$/Problems/Avoid division by zero" />
+            <option value="$PROJECT_DIR$/Problems/Backward indexes" />
+            <option value="$PROJECT_DIR$/Problems/Binary search" />
+            <option value="$PROJECT_DIR$/Problems/Blacklist" />
+            <option value="$PROJECT_DIR$/Problems/Book" />
+            <option value="$PROJECT_DIR$/Problems/Book (1)" />
+            <option value="$PROJECT_DIR$/Problems/Books" />
+            <option value="$PROJECT_DIR$/Problems/Calculator with four methods" />
+            <option value="$PROJECT_DIR$/Problems/Call me awesome" />
+            <option value="$PROJECT_DIR$/Problems/Car" />
+            <option value="$PROJECT_DIR$/Problems/Catching some exceptions" />
+            <option value="$PROJECT_DIR$/Problems/Check IP address" />
+            <option value="$PROJECT_DIR$/Problems/Check for null" />
+            <option value="$PROJECT_DIR$/Problems/Check the clock time" />
+            <option value="$PROJECT_DIR$/Problems/Check the essay" />
+            <option value="$PROJECT_DIR$/Problems/Circle" />
+            <option value="$PROJECT_DIR$/Problems/Classes for Hospital" />
+            <option value="$PROJECT_DIR$/Problems/Compact strings with AsciiCharSequence" />
+            <option value="$PROJECT_DIR$/Problems/Companies" />
+            <option value="$PROJECT_DIR$/Problems/Complex numbers" />
+            <option value="$PROJECT_DIR$/Problems/Concat positive numbers" />
+            <option value="$PROJECT_DIR$/Problems/Converting and multiplying" />
+            <option value="$PROJECT_DIR$/Problems/Correct the program" />
+            <option value="$PROJECT_DIR$/Problems/Correct the usage of non-generic class" />
+            <option value="$PROJECT_DIR$/Problems/Count the value occurrences" />
+            <option value="$PROJECT_DIR$/Problems/Counter" />
+            <option value="$PROJECT_DIR$/Problems/Counting words" />
+            <option value="$PROJECT_DIR$/Problems/Create a full name" />
+            <option value="$PROJECT_DIR$/Problems/Create an euphonious word" />
+            <option value="$PROJECT_DIR$/Problems/Creating a map" />
+            <option value="$PROJECT_DIR$/Problems/Creating a set" />
+            <option value="$PROJECT_DIR$/Problems/Creating list" />
+            <option value="$PROJECT_DIR$/Problems/Displaying pairs" />
+            <option value="$PROJECT_DIR$/Problems/Division" />
+            <option value="$PROJECT_DIR$/Problems/Double characters" />
+            <option value="$PROJECT_DIR$/Problems/Employee" />
+            <option value="$PROJECT_DIR$/Problems/Employees" />
+            <option value="$PROJECT_DIR$/Problems/Extracting big numbers from a text" />
+            <option value="$PROJECT_DIR$/Problems/Extracting words from a text" />
+            <option value="$PROJECT_DIR$/Problems/Field count" />
+            <option value="$PROJECT_DIR$/Problems/Filtering the list" />
+            <option value="$PROJECT_DIR$/Problems/Find a word with a given length" />
+            <option value="$PROJECT_DIR$/Problems/Find all passwords" />
+            <option value="$PROJECT_DIR$/Problems/Find mistake" />
+            <option value="$PROJECT_DIR$/Problems/Find the nearest number" />
+            <option value="$PROJECT_DIR$/Problems/Fix compile-time errors" />
+            <option value="$PROJECT_DIR$/Problems/Fix the method to print strings in the reverse order" />
+            <option value="$PROJECT_DIR$/Problems/Fix the non-compiled hierarchy" />
+            <option value="$PROJECT_DIR$/Problems/Fix the program" />
+            <option value="$PROJECT_DIR$/Problems/Frequency of characters" />
+            <option value="$PROJECT_DIR$/Problems/Geometric cube" />
+            <option value="$PROJECT_DIR$/Problems/Get first and last elements" />
+            <option value="$PROJECT_DIR$/Problems/Getting input" />
+            <option value="$PROJECT_DIR$/Problems/Getting submaps" />
+            <option value="$PROJECT_DIR$/Problems/Getting the fullname" />
+            <option value="$PROJECT_DIR$/Problems/Getting the max element of a stack" />
+            <option value="$PROJECT_DIR$/Problems/Grades" />
+            <option value="$PROJECT_DIR$/Problems/How many nuts each squirrel will get" />
+            <option value="$PROJECT_DIR$/Problems/Html Parser" />
+            <option value="$PROJECT_DIR$/Problems/Illegal identifiers" />
+            <option value="$PROJECT_DIR$/Problems/Implement compareTo method" />
+            <option value="$PROJECT_DIR$/Problems/Implement comparing by additional fields" />
+            <option value="$PROJECT_DIR$/Problems/In the middle of a word" />
+            <option value="$PROJECT_DIR$/Problems/Initialize an object of a generic class" />
+            <option value="$PROJECT_DIR$/Problems/IntBinaryOperation" />
+            <option value="$PROJECT_DIR$/Problems/Inverse boolean flags" />
+            <option value="$PROJECT_DIR$/Problems/K-combination" />
+            <option value="$PROJECT_DIR$/Problems/Kidnapper of Ice cream" />
+            <option value="$PROJECT_DIR$/Problems/Modifying a map" />
+            <option value="$PROJECT_DIR$/Problems/Multiple swaps" />
+            <option value="$PROJECT_DIR$/Problems/Mutable geometric shapes" />
+            <option value="$PROJECT_DIR$/Problems/N-th power" />
+            <option value="$PROJECT_DIR$/Problems/Number parsing" />
+            <option value="$PROJECT_DIR$/Problems/Only true or false" />
+            <option value="$PROJECT_DIR$/Problems/Output elements" />
+            <option value="$PROJECT_DIR$/Problems/Output the list's elements" />
+            <option value="$PROJECT_DIR$/Problems/Overloading methods" />
+            <option value="$PROJECT_DIR$/Problems/Parse url" />
+            <option value="$PROJECT_DIR$/Problems/Pastry packing optimization" />
+            <option value="$PROJECT_DIR$/Problems/Patient needs a doctor" />
+            <option value="$PROJECT_DIR$/Problems/Pets and boxes" />
+            <option value="$PROJECT_DIR$/Problems/Pets in boxes" />
+            <option value="$PROJECT_DIR$/Problems/Phone" />
+            <option value="$PROJECT_DIR$/Problems/Photocopiers" />
+            <option value="$PROJECT_DIR$/Problems/Preparing full name" />
+            <option value="$PROJECT_DIR$/Problems/Print" />
+            <option value="$PROJECT_DIR$/Problems/Print  We are robots!" />
+            <option value="$PROJECT_DIR$/Problems/Print the age" />
+            <option value="$PROJECT_DIR$/Problems/Project constants and methods" />
+            <option value="$PROJECT_DIR$/Problems/Publication and its subclasses" />
+            <option value="$PROJECT_DIR$/Problems/Publications" />
+            <option value="$PROJECT_DIR$/Problems/Remove HTML tags" />
+            <option value="$PROJECT_DIR$/Problems/Remove comments" />
+            <option value="$PROJECT_DIR$/Problems/Remove elements of a collection" />
+            <option value="$PROJECT_DIR$/Problems/Remove extra spaces" />
+            <option value="$PROJECT_DIR$/Problems/Return empty string when argument is null" />
+            <option value="$PROJECT_DIR$/Problems/Right Rotation" />
+            <option value="$PROJECT_DIR$/Problems/Safe converting" />
+            <option value="$PROJECT_DIR$/Problems/Safe password" />
+            <option value="$PROJECT_DIR$/Problems/Saying animals" />
+            <option value="$PROJECT_DIR$/Problems/Shape hierarchy" />
+            <option value="$PROJECT_DIR$/Problems/Simulating a clock" />
+            <option value="$PROJECT_DIR$/Problems/Sort out the classes" />
+            <option value="$PROJECT_DIR$/Problems/Sorting arrays" />
+            <option value="$PROJECT_DIR$/Problems/Sorting numbers" />
+            <option value="$PROJECT_DIR$/Problems/Sorting sequences" />
+            <option value="$PROJECT_DIR$/Problems/Squares list" />
+            <option value="$PROJECT_DIR$/Problems/Start or end of a word" />
+            <option value="$PROJECT_DIR$/Problems/String to double conversion" />
+            <option value="$PROJECT_DIR$/Problems/The LIFO principle in action" />
+            <option value="$PROJECT_DIR$/Problems/The first element" />
+            <option value="$PROJECT_DIR$/Problems/The first index of a sublist" />
+            <option value="$PROJECT_DIR$/Problems/The minimum value of an array" />
+            <option value="$PROJECT_DIR$/Problems/The percentage of G and C characters" />
+            <option value="$PROJECT_DIR$/Problems/The sequence" />
+            <option value="$PROJECT_DIR$/Problems/Time" />
+            <option value="$PROJECT_DIR$/Problems/Time constants" />
+            <option value="$PROJECT_DIR$/Problems/Two numbers never occur next to each other" />
+            <option value="$PROJECT_DIR$/Problems/User" />
+            <option value="$PROJECT_DIR$/Problems/Users and WebSites" />
+            <option value="$PROJECT_DIR$/Problems/Vehicle registration number" />
+            <option value="$PROJECT_DIR$/Problems/What's wrong" />
+            <option value="$PROJECT_DIR$/Problems/Which brackets are balanced" />
+            <option value="$PROJECT_DIR$/Problems/Who is who" />
+            <option value="$PROJECT_DIR$/Problems/Writing a class" />
+            <option value="$PROJECT_DIR$/util" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

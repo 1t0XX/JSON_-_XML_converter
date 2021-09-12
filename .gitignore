@@ -1,0 +1,91 @@
+# Project exclude paths
+/.gradle/
+/JSON - XML converter/task/build/
+/JSON - XML converter/task/out/
+/JSON - XML converter/task/out/production/classes/
+/Problems/Adding values/out/
+/Problems/Adding values/out/production/classes/
+/Problems/Avoid division by zero/out/
+/Problems/Avoid division by zero/out/production/classes/
+/Problems/Avoid NPE with strings/out/
+/Problems/Avoid NPE with strings/out/production/classes/
+/Problems/Call me awesome/out/
+/Problems/Call me awesome/out/production/classes/
+/Problems/Companies/out/
+/Problems/Companies/out/production/classes/
+/Problems/Concat positive numbers/out/
+/Problems/Concat positive numbers/out/production/classes/
+/Problems/Create a full name/out/
+/Problems/Create a full name/out/production/classes/
+/Problems/Creating a map/out/
+/Problems/Creating a map/out/production/classes/
+/Problems/Creating a set/out/
+/Problems/Creating a set/out/production/classes/
+/Problems/Creating list/out/
+/Problems/Creating list/out/production/classes/
+/Problems/Displaying pairs/out/
+/Problems/Displaying pairs/out/production/classes/
+/Problems/Division/out/
+/Problems/Division/out/production/classes/
+/Problems/Double characters/out/
+/Problems/Double characters/out/production/classes/
+/Problems/Filtering the list/out/
+/Problems/Filtering the list/out/production/classes/
+/Problems/Find all passwords/out/
+/Problems/Find all passwords/out/production/classes/
+/Problems/Find mistake/out/
+/Problems/Find mistake/out/production/classes/
+/Problems/Find the nearest number/out/
+/Problems/Find the nearest number/out/production/classes/
+/Problems/Fix compile-time errors/out/
+/Problems/Fix compile-time errors/out/production/classes/
+/Problems/Fix the method to print strings in the reverse order/out/
+/Problems/Fix the method to print strings in the reverse order/out/production/classes/
+/Problems/Frequency of characters/out/
+/Problems/Frequency of characters/out/production/classes/
+/Problems/Grades/out/
+/Problems/Grades/out/production/classes/
+/Problems/How many nuts each squirrel will get/out/
+/Problems/How many nuts each squirrel will get/out/production/classes/
+/Problems/Html Parser/out/
+/Problems/Html Parser/out/production/classes/
+/Problems/Illegal identifiers/out/
+/Problems/Illegal identifiers/out/production/classes/
+/Problems/Mutable geometric shapes/out/
+/Problems/Mutable geometric shapes/out/production/classes/
+/Problems/N-th power/out/
+/Problems/N-th power/out/production/classes/
+/Problems/Output elements/out/
+/Problems/Output elements/out/production/classes/
+/Problems/Output the list's elements/out/
+/Problems/Output the list's elements/out/production/classes/
+/Problems/Patient needs a doctor/out/
+/Problems/Patient needs a doctor/out/production/classes/
+/Problems/Preparing full name/out/
+/Problems/Preparing full name/out/production/classes/
+/Problems/Print/out/
+/Problems/Print/out/production/classes/
+/Problems/Print the age/out/
+/Problems/Print the age/out/production/classes/
+/Problems/Remove extra spaces/out/
+/Problems/Remove extra spaces/out/production/classes/
+/Problems/Return empty string when argument is null/out/
+/Problems/Return empty string when argument is null/out/production/classes/
+/Problems/Safe converting/out/
+/Problems/Safe converting/out/production/classes/
+/Problems/Simulating a clock/out/
+/Problems/Simulating a clock/out/production/classes/
+/Problems/Sorting sequences/out/
+/Problems/Sorting sequences/out/production/classes/
+/Problems/Squares list/out/
+/Problems/Squares list/out/production/classes/
+/Problems/The LIFO principle in action/out/
+/Problems/The LIFO principle in action/out/production/classes/
+/Problems/The minimum value of an array/out/
+/Problems/The minimum value of an array/out/production/classes/
+/Problems/Two numbers never occur next to each other/out/
+/Problems/Two numbers never occur next to each other/out/production/classes/
+/Problems/Vehicle registration number/out/
+/Problems/Vehicle registration number/out/production/classes/
+/Problems/What's wrong/out/
+/Problems/What's wrong/out/production/classes/
